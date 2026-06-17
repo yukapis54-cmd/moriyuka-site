@@ -14,7 +14,9 @@ export default function Hero() {
             ナマコと向き合う日々を。
           </h1>
           <p className="mt-6 text-base leading-relaxed text-ocean-800 md:text-lg">
-            脱サラ・Uターン・SNS発信のリアル。
+            家業のナマコを、日本全国へ。そして島をもっと盛り上げたい。
+            <br />
+            脱サラ・Uターン・SNS発信のリアルを届けます。
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a href="#newsletter" className="btn-accent">

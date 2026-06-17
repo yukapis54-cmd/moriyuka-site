@@ -24,7 +24,7 @@ export default function About() {
             新しい働き方の実験
           </h2>
           <p className="mt-6 text-base leading-relaxed text-ocean-900 md:text-lg">
-            愛媛の離島で育ち、大阪のIT企業に就職。年収600万を捨ててUターンしたのは、家業のナマコ屋を継ぐため。SNSと通販を軸に、島の食を世界に届ける挑戦をしています。
+            愛媛の離島で育ち、大阪のIT企業に就職。年収600万を捨ててUターンしたのは、家業のナマコ屋を継ぐため。家業のナマコを日本全国の食卓へ届け、そして島そのものをもっと盛り上げたい——その思いで、SNSと通販を軸に挑戦を続けています。
           </p>
           <div className="mt-8">
             <a href="#" className="btn-primary">
