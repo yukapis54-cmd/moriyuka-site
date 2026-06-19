@@ -3,14 +3,39 @@
 import { useState } from "react";
 import { Mail } from "lucide-react";
 
+// Kit (ConvertKit) のフォームID。Vercel / .env.local の環境変数で設定する。
+const FORM_ID = process.env.NEXT_PUBLIC_CONVERTKIT_FORM_ID;
+
 export default function Newsletter() {
   const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">(
+    "idle"
+  );
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    if (!FORM_ID) {
+      setStatus("error");
+      return;
+    }
+    setStatus("loading");
+    try {
+      const res = await fetch(
+        `https://app.kit.com/forms/${FORM_ID}/subscriptions`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({ email_address: email }),
+        }
+      );
+      const data = await res.json().catch(() => ({}));
+      setStatus(res.ok && data.status !== "error" ? "success" : "error");
+    } catch {
+      setStatus("error");
+    }
   };
+
+  const submitted = status === "success";
 
   return (
     <section id="newsletter" className="section bg-white">
@@ -33,7 +58,7 @@ export default function Newsletter() {
 
           {submitted ? (
             <p className="mt-8 rounded-full bg-white/15 px-6 py-3 text-sm font-medium">
-              登録ありがとうございます（デモ表示）
+              ご登録ありがとうございます！確認メールをご確認ください。
             </p>
           ) : (
             <form
@@ -50,11 +75,17 @@ export default function Newsletter() {
               />
               <button
                 type="submit"
-                className="rounded-full bg-sand-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-sand-600"
+                disabled={status === "loading"}
+                className="rounded-full bg-sand-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-sand-600 disabled:opacity-60"
               >
-                登録する
+                {status === "loading" ? "送信中…" : "登録する"}
               </button>
             </form>
+          )}
+          {status === "error" && (
+            <p className="mt-4 text-sm font-medium text-sand-200">
+              送信に失敗しました。時間をおいて再度お試しください。
+            </p>
           )}
         </div>
       </div>

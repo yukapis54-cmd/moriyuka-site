@@ -2,13 +2,41 @@
 
 import { useState } from "react";
 
-export default function Contact() {
-  const [submitted, setSubmitted] = useState(false);
+const ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
 
-  const handleSubmit = (e: React.FormEvent) => {
+export default function Contact() {
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">(
+    "idle"
+  );
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitted(true);
+    if (!ACCESS_KEY) {
+      setStatus("error");
+      return;
+    }
+    setStatus("loading");
+    const formData = new FormData(e.currentTarget);
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: ACCESS_KEY,
+          subject: "【もりゆか】お問い合わせ",
+          from_name: "MORIYUKA Contact",
+          name: formData.get("name"),
+          email: formData.get("email"),
+          message: formData.get("message"),
+        }),
+      });
+      setStatus(res.ok ? "success" : "error");
+    } catch {
+      setStatus("error");
+    }
   };
+
+  const submitted = status === "success";
 
   return (
     <section id="contact" className="section bg-white">
@@ -26,7 +54,7 @@ export default function Contact() {
 
           {submitted ? (
             <p className="rounded-2xl border border-ocean-100 bg-ocean-50 p-6 text-center text-sm font-medium text-ocean-900">
-              送信ありがとうございました（デモ表示）
+              送信ありがとうございました！
             </p>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
@@ -39,6 +67,7 @@ export default function Contact() {
                 </label>
                 <input
                   id="name"
+                  name="name"
                   type="text"
                   required
                   className="w-full rounded-xl border border-ocean-200 bg-white px-4 py-3 text-sm outline-none focus:border-ocean-500"
@@ -53,6 +82,7 @@ export default function Contact() {
                 </label>
                 <input
                   id="email"
+                  name="email"
                   type="email"
                   required
                   className="w-full rounded-xl border border-ocean-200 bg-white px-4 py-3 text-sm outline-none focus:border-ocean-500"
@@ -67,15 +97,25 @@ export default function Contact() {
                 </label>
                 <textarea
                   id="message"
+                  name="message"
                   required
                   rows={6}
                   className="w-full rounded-xl border border-ocean-200 bg-white px-4 py-3 text-sm outline-none focus:border-ocean-500"
                 />
               </div>
               <div className="text-center">
-                <button type="submit" className="btn-primary">
-                  送信する
+                <button
+                  type="submit"
+                  disabled={status === "loading"}
+                  className="btn-primary disabled:opacity-60"
+                >
+                  {status === "loading" ? "送信中…" : "送信する"}
                 </button>
+                {status === "error" && (
+                  <p className="mt-4 text-sm font-medium text-red-600">
+                    送信に失敗しました。時間をおいて再度お試しください。
+                  </p>
+                )}
               </div>
             </form>
           )}
