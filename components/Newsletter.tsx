@@ -48,7 +48,7 @@ export default function Newsletter() {
             NEWSLETTER
           </p>
           <h2 className="mt-3 text-2xl font-bold md:text-3xl">
-            島から、もりゆか
+            島暮らし1人事業
           </h2>
           <p className="mt-4 text-sm leading-relaxed text-white/90 md:text-base">
             島での暮らし、ナマコ事業、SNS発信の裏側を月数回のメルマガでお届け。

@@ -24,11 +24,33 @@ export default function About() {
             新しい働き方の実験
           </h2>
           <p className="mt-6 text-base leading-relaxed text-ocean-900 md:text-lg">
-            愛媛の離島で育ち、大阪のIT企業に就職。年収600万を捨ててUターンしたのは、家業のナマコ屋を継ぐため。家業のナマコを日本全国の食卓へ届け、そして島そのものをもっと盛り上げたい——その思いで、SNSと通販を軸に挑戦を続けています。
+            愛媛の離島で生まれ育ち、島を出て大阪のIT企業へ就職。安定した会社員生活と年収600万円——それでも心に残っていたのは、家業のナマコ屋と、人口が減りゆくふるさとの島のことでした。
           </p>
+          <p className="mt-4 text-base leading-relaxed text-ocean-900 md:text-lg">
+            「家業のナマコを継ぎ、この島をもう一度盛り上げたい」。その思いで会社を辞めてUターン。いまはSNSでの発信と自社ECでの通販を軸に、瀬戸内の天然ナマコを日本全国の食卓へ届ける挑戦を続けています。
+          </p>
+          <ul className="mt-6 space-y-2 text-sm text-ocean-800 md:text-base">
+            <li className="flex items-start gap-2">
+              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-sand-500" />
+              7つのSNSで発信、総フォロワー14,000人超
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-sand-500" />
+              公式LINE登録263人／自社EC「setouchi-seafood.com」で全国へ
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-sand-500" />
+              瀬戸内・愛媛の離島から天然ナマコを産地直送
+            </li>
+          </ul>
           <div className="mt-8">
-            <a href="#" className="btn-primary">
-              もっと詳しく見る
+            <a
+              href="https://note.com/moriyukapi"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary"
+            >
+              noteで詳しいストーリーを読む
             </a>
           </div>
         </div>
