@@ -15,7 +15,7 @@ export default function Products() {
         <div className="mx-auto grid max-w-4xl items-center gap-10 rounded-3xl border border-ocean-100 bg-ocean-50/40 p-6 md:grid-cols-2 md:p-10">
           <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl shadow-md">
             <Image
-              src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&w=1000&q=80"
+              src="/images/namako.jpg"
               alt="ナマコ食べ比べセット"
               fill
               className="object-cover"

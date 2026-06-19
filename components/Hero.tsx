@@ -30,8 +30,8 @@ export default function Hero() {
 
         <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-xl md:aspect-[4/5]">
           <Image
-            src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80"
-            alt="愛媛の離島の海"
+            src="/images/hero.jpg"
+            alt="愛媛の離島から望む瀬戸内の海"
             fill
             priority
             className="object-cover"

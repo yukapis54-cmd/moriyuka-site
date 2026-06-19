@@ -6,8 +6,8 @@ export default function About() {
       <div className="container-base grid items-center gap-10 md:grid-cols-2 md:gap-16">
         <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-lg">
           <Image
-            src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1000&q=80"
-            alt="島の風景"
+            src="/images/about.jpg"
+            alt="島の海を眺めるもりゆか"
             fill
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 50vw"
