@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<style>
+  :root{
+    --cream:#f7f1e6; --cream2:#efe5d4; --paper:#fbf7ef;
+    --ink:#2c2a25; --ink-soft:#7a7264; --line:#ddd0bb;
+    --navy:#27405a; --navy-soft:#4d6679;
+    --uni:#e8862e; --uni-deep:#c4651a; --uni-soft:#f3b878; --uni-pale:#f8d9ad;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#3a3a3a;}
+  .mincho{font-family:'Noto Serif CJK JP',serif;}
+  .gothic{font-family:'Noto Sans CJK JP','Noto Sans CJK JP Light',sans-serif;}
+  .slide{
+    position:relative;width:1080px;height:1350px;overflow:hidden;
+    background:var(--paper);color:var(--ink);
+    font-family:'Noto Sans CJK JP',sans-serif;
+  }
+  .lat{font-family:'Noto Sans CJK JP';font-weight:300;letter-spacing:.42em;font-size:23px;color:var(--ink-soft);text-transform:uppercase;}
+  .pageno{position:absolute;z-index:5;font-family:'Noto Sans CJK JP';font-weight:300;letter-spacing:.2em;font-size:23px;color:var(--ink-soft);}
+  .brand{font-family:'Noto Sans CJK JP';font-weight:500;letter-spacing:.34em;font-size:24px;color:var(--navy);}
+  .hairline{height:1px;background:var(--line);border:0;}
+  /* photo frame */
+  .photo{position:relative;overflow:hidden;background:linear-gradient(160deg,#eadfca,#e3d4ba);}
+  .photo .ph-label{position:absolute;left:50%;bottom:38px;transform:translateX(-50%);font-family:'Noto Sans CJK JP';font-weight:300;font-size:21px;letter-spacing:.18em;color:rgba(60,50,35,.42);}
+  .photo.has-photo{background-size:cover;background-position:center;}
+  .photo.has-photo .scene,.photo.has-photo .ph-label{display:none;}
+  .scene{position:absolute;inset:0;}
+  .grain{position:absolute;inset:0;background:radial-gradient(120% 80% at 50% 0%,rgba(255,255,255,.18),transparent 60%);mix-blend-mode:screen;}
+  .vig{position:absolute;inset:0;box-shadow:inset 0 -120px 160px -60px rgba(60,45,25,.28),inset 0 60px 120px -60px rgba(255,255,255,.25);}
+  h1.title{font-family:'Noto Serif CJK JP',serif;font-weight:400;letter-spacing:.06em;line-height:1.62;}
+  .kicker{font-family:'Noto Serif CJK JP',serif;font-weight:400;letter-spacing:.16em;color:var(--uni-deep);}
+  .body{font-family:'Noto Sans CJK JP','Noto Sans CJK JP Light';font-weight:300;line-height:2.0;letter-spacing:.04em;color:var(--ink-soft);}
+</style>
+</head>
+<body>
+
+<!-- ============ 01 COVER ============ -->
+<div class="slide">
+  <!-- full-bleed photo upper -->
+  <div class="photo" data-slot="1" style="position:absolute;top:0;left:0;width:1080px;height:860px;">
+    <div class="scene">
+      <!-- uni pack scene -->
+      <div style="position:absolute;inset:0;background:linear-gradient(160deg,#e9dcc4,#dcc9a8);"></div>
+      <!-- wooden tray -->
+      <div style="position:absolute;left:50%;top:54%;transform:translate(-50%,-50%);width:620px;height:430px;border-radius:24px;background:linear-gradient(180deg,#fbf3e6,#f3e7d2);box-shadow:0 40px 90px -30px rgba(90,60,25,.45);display:flex;align-items:center;justify-content:center;">
+        <div class="uni-grid"></div>
+      </div>
+      <div class="vig"></div><div class="grain"></div>
+    </div>
+    <div class="ph-label">写真をここに（photo/01.jpg）</div>
+  </div>
+  <!-- cream caption band -->
+  <div style="position:absolute;left:0;bottom:0;width:1080px;height:520px;background:var(--paper);"></div>
+  <div style="position:absolute;left:88px;bottom:0;width:904px;height:520px;display:flex;flex-direction:column;justify-content:center;">
+    <div class="lat" style="margin-bottom:26px;">setouchi · murasaki uni</div>
+    <h1 class="title" style="font-size:74px;line-height:1.5;">瀬戸内、<span style="color:var(--uni-deep);">塩水ウニ。</span></h1>
+    <div class="body" style="margin-top:22px;font-size:30px;">ミョウバン不使用。海水だけで仕立てた、無添加のムラサキウニ。</div>
+    <hr class="hairline" style="margin:38px 0 26px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <span class="brand">MORIYUKA</span>
+      <span class="lat" style="letter-spacing:.2em;">swipe →</span>
+    </div>
+  </div>
+  <span class="pageno" style="top:54px;right:60px;color:#fff;">01 / 07</span>
+</div>
+
+<!-- ============ 02 PROBLEM ============ -->
+<div class="slide" style="background:var(--cream);">
+  <span class="pageno" style="top:64px;right:72px;">02 / 07</span>
+  <div style="padding:96px 88px 0;">
+    <div class="lat">the hidden taste</div>
+    <h1 class="title" style="font-size:62px;margin-top:30px;">その雑味は、<br><span style="color:var(--uni-deep);">ミョウバン</span>の味かも。</h1>
+  </div>
+  <div class="photo" data-slot="2" style="margin:56px 88px 0;height:520px;border-radius:18px;">
+    <div class="scene">
+      <div style="position:absolute;inset:0;background:linear-gradient(160deg,#e3d6bd,#d8c4a4);"></div>
+      <!-- ita-uni board -->
+      <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:720px;height:300px;border-radius:10px;background:linear-gradient(180deg,#7c5a36,#5f421f);box-shadow:0 30px 60px -24px rgba(60,40,15,.5);"></div>
+      <div class="dull-uni"></div>
+      <div class="vig"></div>
+    </div>
+    <div class="ph-label" style="color:rgba(255,255,255,.55);">写真をここに（photo/02.jpg）</div>
+  </div>
+  <div style="padding:46px 88px 0;">
+    <div class="body" style="font-size:30px;">
+      市販の“板ウニ”の多くは、形を保つために<span style="color:var(--ink);font-weight:500;">ミョウバン（明礬）</span>という添加物が使われています。あの独特の苦み・薬品っぽい後味の正体です。
+    </div>
+  </div>
+  <span class="brand" style="position:absolute;left:88px;bottom:64px;">MORIYUKA</span>
+  <span class="lat" style="position:absolute;right:88px;bottom:64px;letter-spacing:.2em;">続き →</span>
+</div>
+
+<!-- ============ 03 SOLUTION ============ -->
+<div class="slide">
+  <div class="photo" data-slot="3" style="position:absolute;top:0;left:0;width:1080px;height:560px;">
+    <div class="scene">
+      <div style="position:absolute;inset:0;background:linear-gradient(160deg,#f0e6d2,#e6d3b4);"></div>
+      <div style="position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);width:560px;height:360px;border-radius:50% 50% 46% 46%/55% 55% 45% 45%;background:radial-gradient(circle at 40% 35%,#fff8ec,#efe0c8);box-shadow:0 36px 80px -30px rgba(90,60,25,.4);display:flex;align-items:center;justify-content:center;">
+        <div class="uni-macro"></div>
+      </div>
+      <div class="vig"></div><div class="grain"></div>
+    </div>
+    <div class="ph-label" style="color:rgba(255,255,255,.6);">写真をここに（photo/03.jpg）</div>
+  </div>
+  <span class="pageno" style="top:54px;right:60px;color:#fff;">03 / 07</span>
+  <div style="position:absolute;top:560px;left:0;width:1080px;height:790px;background:var(--paper);padding:62px 88px;">
+    <div class="kicker" style="font-size:30px;">海水だけで、無添加。</div>
+    <h1 class="title" style="font-size:50px;margin-top:16px;">素材の甘みを、<br>そのまま瓶へ。</h1>
+    <div style="margin-top:40px;display:flex;flex-direction:column;gap:0;">
+      <div class="nat-row"><span class="nat-no">01</span><div><b>とろける甘み</b>添加物で隠れない、自然な濃い甘さ。</div></div>
+      <hr class="hairline">
+      <div class="nat-row"><span class="nat-no">02</span><div><b>磯の香り</b>口に広がる、瀬戸内の海そのままの香り。</div></div>
+      <hr class="hairline">
+      <div class="nat-row"><span class="nat-no">03</span><div><b>クリアな後味</b>えぐみのない、澄んだ余韻。</div></div>
+    </div>
+  </div>
+  <span class="brand" style="position:absolute;left:88px;bottom:56px;">MORIYUKA</span>
+  <span class="lat" style="position:absolute;right:88px;bottom:56px;letter-spacing:.2em;">比べてみて →</span>
+</div>
+
+<!-- ============ 04 COMPARISON ============ -->
+<div class="slide" style="background:var(--cream);">
+  <span class="pageno" style="top:64px;right:72px;">04 / 07</span>
+  <div style="padding:100px 88px 0;">
+    <div class="lat">a clear difference</div>
+    <h1 class="title" style="font-size:58px;margin-top:28px;">板ウニと、塩水ウニ。</h1>
+  </div>
+  <div style="padding:70px 88px 0;">
+    <div style="display:grid;grid-template-columns:1fr 1.1fr 1.1fr;align-items:center;">
+      <div class="c-h"></div>
+      <div class="c-top">一般的な板ウニ</div>
+      <div class="c-top c-ours">塩水・無添加</div>
+    </div>
+    <div class="natcmp">
+      <div class="c-h">添加物</div><div class="c-b">ミョウバンあり</div><div class="c-g">無添加</div>
+      <div class="c-h">後味</div><div class="c-b">苦み・薬品感</div><div class="c-g">クリア</div>
+      <div class="c-h">甘み</div><div class="c-b">弱まりがち</div><div class="c-g">濃厚</div>
+      <div class="c-h c-last">鮮度</div><div class="c-b c-last">見えにくい</div><div class="c-g c-last">産地直送</div>
+    </div>
+  </div>
+  <div style="padding:60px 88px 0;">
+    <div class="body mincho" style="font-size:34px;color:var(--navy);letter-spacing:.08em;">同じ“ウニ”でも、入口から別物です。</div>
+  </div>
+  <span class="brand" style="position:absolute;left:88px;bottom:64px;">MORIYUKA</span>
+  <span class="lat" style="position:absolute;right:88px;bottom:64px;letter-spacing:.2em;">産地の話 →</span>
+</div>
+
+<!-- ============ 05 WHY SETOUCHI ============ -->
+<div class="slide">
+  <div class="photo" data-slot="5" style="position:absolute;top:0;left:0;width:1080px;height:600px;">
+    <div class="scene">
+      <!-- seascape -->
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,#d9ecf3 0%,#bfe0 ); background:linear-gradient(180deg,#dceff4,#bfe2ea 55%,#a9d3dd);"></div>
+      <div style="position:absolute;right:160px;top:120px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,#fff5e0,#ffe6b8);box-shadow:0 0 80px 30px rgba(255,236,184,.6);"></div>
+      <!-- islands -->
+      <div style="position:absolute;left:90px;bottom:230px;width:360px;height:120px;border-radius:50%/100% 100% 0 0;background:#6f8f7e;opacity:.85;"></div>
+      <div style="position:absolute;right:120px;bottom:235px;width:300px;height:95px;border-radius:50%/100% 100% 0 0;background:#5f8273;opacity:.8;"></div>
+      <!-- sea -->
+      <div style="position:absolute;left:0;bottom:0;width:1080px;height:260px;background:linear-gradient(180deg,#5fa6bd,#3d7f99);"></div>
+      <svg style="position:absolute;left:0;bottom:230px;width:1080px;height:60px;" viewBox="0 0 1080 60" preserveAspectRatio="none"><path d="M0,30 C180,5 300,55 520,30 C740,5 860,55 1080,28 L1080,60 L0,60Z" fill="#5fa6bd"/></svg>
+      <div class="vig"></div>
+    </div>
+    <div class="ph-label" style="color:rgba(255,255,255,.7);">写真をここに（photo/05.jpg）</div>
+  </div>
+  <span class="pageno" style="top:54px;right:60px;color:#fff;">05 / 07</span>
+  <div style="position:absolute;top:600px;left:0;width:1080px;height:750px;background:var(--paper);padding:60px 88px;">
+    <div class="kicker" style="font-size:28px;">なぜ、瀬戸内のウニ？</div>
+    <h1 class="title" style="font-size:48px;margin-top:14px;line-height:1.5;">穏やかな内海が育てる、<br>雑味のない甘さ。</h1>
+    <div style="margin-top:36px;display:flex;flex-direction:column;gap:0;">
+      <div class="nat-row"><span class="nat-no">01</span><div><b>良質なプランクトン</b>栄養豊かな海藻とプランクトンを食べて育つ。</div></div>
+      <hr class="hairline">
+      <div class="nat-row"><span class="nat-no">02</span><div><b>穏やかな潮流</b>荒れにくい内海で、身がふっくら色づく。</div></div>
+      <hr class="hairline">
+      <div class="nat-row"><span class="nat-no">03</span><div><b>漁師の手むき</b>島の漁師が一つひとつ、丁寧に。</div></div>
+    </div>
+  </div>
+  <span class="brand" style="position:absolute;left:88px;bottom:50px;">MORIYUKA</span>
+  <span class="lat" style="position:absolute;right:88px;bottom:50px;letter-spacing:.2em;">お届け →</span>
+</div>
+
+<!-- ============ 06 FRESHNESS ============ -->
+<div class="slide" style="background:var(--cream);">
+  <span class="pageno" style="top:64px;right:72px;">06 / 07</span>
+  <div style="padding:96px 88px 0;">
+    <div class="lat">straight from the island</div>
+    <h1 class="title" style="font-size:56px;margin-top:28px;">水揚げした日に、<br><span style="color:var(--uni-deep);">塩水パック。</span></h1>
+  </div>
+  <div class="photo" data-slot="6" style="margin:52px 88px 0;height:430px;border-radius:18px;">
+    <div class="scene">
+      <div style="position:absolute;inset:0;background:linear-gradient(160deg,#dfeef2,#c4dde4);"></div>
+      <!-- boat -->
+      <div style="position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);">
+        <svg width="420" height="200" viewBox="0 0 420 200">
+          <path d="M40,70 L380,70 L330,140 L90,140 Z" fill="#f3ead8" stroke="#b9a888" stroke-width="3"/>
+          <rect x="150" y="20" width="10" height="55" fill="#8a6f4c"/>
+          <path d="M160,24 L250,60 L160,66 Z" fill="#e8862e"/>
+        </svg>
+      </div>
+      <div style="position:absolute;left:0;bottom:0;width:100%;height:120px;background:linear-gradient(180deg,#7fb6c8,#5a98ad);"></div>
+      <div class="vig"></div>
+    </div>
+    <div class="ph-label" style="color:rgba(255,255,255,.65);">写真をここに（photo/06.jpg）</div>
+  </div>
+  <div style="padding:44px 88px 0;display:flex;gap:60px;">
+    <div class="flow"><b>水揚げ</b>瀬戸内の漁場で、その日に。</div>
+    <div class="flow"><b>手むき・塩水詰め</b>無添加で瓶へ。</div>
+    <div class="flow"><b>冷蔵で直送</b>鮮度のまま全国へ。</div>
+  </div>
+  <span class="brand" style="position:absolute;left:88px;bottom:60px;">MORIYUKA</span>
+  <span class="lat" style="position:absolute;right:88px;bottom:60px;letter-spacing:.2em;">ご注文 →</span>
+</div>
+
+<!-- ============ 07 CTA ============ -->
+<div class="slide">
+  <div class="photo" data-slot="7" style="position:absolute;top:0;left:0;width:1080px;height:680px;">
+    <div class="scene">
+      <div style="position:absolute;inset:0;background:linear-gradient(160deg,#ecdfc6,#e0cdab);"></div>
+      <!-- gift box -->
+      <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:420px;height:300px;border-radius:14px;background:linear-gradient(180deg,#fbf4e6,#efe1c8);box-shadow:0 40px 80px -28px rgba(90,60,25,.45);"></div>
+      <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:60px;height:300px;background:rgba(196,101,26,.85);"></div>
+      <div style="position:absolute;left:50%;top:calc(50% - 150px);transform:translate(-50%,-50%);width:420px;height:54px;background:rgba(196,101,26,.85);"></div>
+      <div class="vig"></div><div class="grain"></div>
+    </div>
+    <div class="ph-label" style="color:rgba(255,255,255,.6);">写真をここに（photo/07.jpg）</div>
+  </div>
+  <span class="pageno" style="top:54px;right:60px;color:#fff;">07 / 07</span>
+  <div style="position:absolute;top:680px;left:0;width:1080px;height:670px;background:var(--paper);padding:58px 88px;text-align:center;display:flex;flex-direction:column;align-items:center;">
+    <div class="lat">order online</div>
+    <h1 class="title" style="font-size:64px;margin-top:22px;">通販で、全国へ。</h1>
+    <div class="body" style="font-size:29px;margin-top:22px;max-width:720px;">ご自宅用にも、贈り物にも。<br>数量限定・旬の時期だけのお届けです。</div>
+    <div style="margin-top:44px;border:1.5px solid var(--navy);border-radius:999px;padding:24px 56px;font-family:'Noto Sans CJK JP';font-weight:500;letter-spacing:.12em;font-size:30px;color:var(--navy);">
+      プロフィールのリンクから
+    </div>
+    <hr class="hairline" style="width:280px;margin:46px 0 24px;">
+    <div class="brand" style="font-size:26px;">@moriyuka_setouchi</div>
+    <div class="lat" style="font-size:19px;letter-spacing:.16em;margin-top:16px;color:#a89a82;">#無添加ウニ　#塩水ウニ　#瀬戸内　#産地直送</div>
+  </div>
+</div>
+
+<style>
+  /* uni lobes */
+  .uni-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:30px;}
+  .uni-grid::before,.uni-grid::after{content:"";}
+  .lobe{width:120px;height:60px;border-radius:50%;background:radial-gradient(circle at 38% 32%,#ffd089,#e8862e 70%,#c4651a);box-shadow:inset 0 -6px 10px rgba(150,75,15,.4);}
+  .uni-macro div,.dull-uni div{}
+  /* nat rows */
+  .nat-row{display:flex;gap:30px;align-items:baseline;padding:14px 0;}
+  .nat-no{font-family:'Noto Sans CJK JP';font-weight:300;font-size:26px;letter-spacing:.1em;color:var(--uni-deep);min-width:48px;}
+  .nat-row b{font-family:'Noto Serif CJK JP',serif;font-weight:500;font-size:35px;color:var(--ink);display:block;margin-bottom:5px;letter-spacing:.04em;}
+  .nat-row div{font-family:'Noto Sans CJK JP','Noto Sans CJK JP Light';font-weight:300;font-size:25px;color:var(--ink-soft);line-height:1.45;}
+  /* comparison */
+  .c-top{text-align:center;font-family:'Noto Sans CJK JP';font-weight:500;font-size:28px;padding:18px 0;color:var(--ink-soft);}
+  .c-ours{color:var(--uni-deep);}
+  .natcmp{display:grid;grid-template-columns:1fr 1.1fr 1.1fr;border-top:1px solid var(--line);}
+  .natcmp>div{padding:30px 8px;display:flex;align-items:center;justify-content:center;text-align:center;border-bottom:1px solid var(--line);font-family:'Noto Sans CJK JP';font-weight:300;font-size:30px;}
+  .natcmp .c-h{justify-content:flex-start;font-family:'Noto Serif CJK JP',serif;font-weight:500;color:var(--ink);padding-left:12px;}
+  .natcmp .c-b{color:var(--ink-soft);}
+  .natcmp .c-g{color:var(--uni-deep);font-weight:500;background:rgba(232,134,46,.07);}
+  .natcmp .c-last{border-bottom:0;}
+  /* flow */
+  .flow{flex:1;}
+  .flow b{font-family:'Noto Serif CJK JP',serif;font-weight:500;font-size:30px;color:var(--navy);display:block;margin-bottom:10px;}
+  .flow{font-family:'Noto Sans CJK JP','Noto Sans CJK JP Light';font-weight:300;font-size:23px;color:var(--ink-soft);line-height:1.6;}
+</style>
+</body>
+</html>
