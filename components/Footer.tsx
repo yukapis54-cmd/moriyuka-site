@@ -1,4 +1,13 @@
-import { Instagram, Youtube, Hash, MessageCircle } from "lucide-react";
+import {
+  Instagram,
+  Music2,
+  Youtube,
+  AtSign,
+  Hash,
+  FileText,
+  MessageCircle,
+  Send,
+} from "lucide-react";
 
 const sitemap = [
   { href: "#about", label: "プロフィール" },
@@ -10,9 +19,13 @@ const sitemap = [
 
 const footerSocials = [
   { href: "https://www.instagram.com/moriyukapi/", Icon: Instagram, label: "Instagram" },
+  { href: "https://www.tiktok.com/@moriyukapi", Icon: Music2, label: "TikTok" },
   { href: "https://www.youtube.com/@moriyukapis", Icon: Youtube, label: "YouTube" },
+  { href: "https://www.threads.com/@moriyukapi", Icon: AtSign, label: "Threads" },
   { href: "https://x.com/namako_moriyuka", Icon: Hash, label: "X" },
+  { href: "https://note.com/moriyukapi", Icon: FileText, label: "note" },
   { href: "https://line.me/R/ti/p/@346bmdxx?ts=04022056&oat_content=url", Icon: MessageCircle, label: "LINE" },
+  { href: "https://substack.com/@1234291644", Icon: Send, label: "Substack" },
 ];
 
 export default function Footer() {
