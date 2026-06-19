@@ -10,13 +10,13 @@ import {
 } from "lucide-react";
 
 const socials = [
-  { name: "Instagram", handle: "@moriyukapi", href: "https://instagram.com/moriyukapi", Icon: Instagram },
+  { name: "Instagram", handle: "@moriyukapi", href: "https://www.instagram.com/moriyukapi/", Icon: Instagram },
   { name: "TikTok", handle: "@moriyuka", href: "https://www.tiktok.com/", Icon: Music2 },
-  { name: "YouTube", handle: "MORIYUKA", href: "https://youtube.com/", Icon: Youtube },
+  { name: "YouTube", handle: "@moriyukapis", href: "https://www.youtube.com/@moriyukapis", Icon: Youtube },
   { name: "Threads", handle: "@moriyukapi", href: "https://www.threads.net/", Icon: AtSign },
   { name: "X", handle: "@namako_moriyuka", href: "https://x.com/namako_moriyuka", Icon: Hash },
-  { name: "NOTE", handle: "moriyuka", href: "https://note.com/", Icon: FileText },
-  { name: "LINE公式", handle: "友だち追加", href: "https://line.me/", Icon: MessageCircle },
+  { name: "NOTE", handle: "@moriyukapi", href: "https://note.com/moriyukapi", Icon: FileText },
+  { name: "LINE公式", handle: "友だち追加", href: "https://line.me/R/ti/p/@346bmdxx?ts=04022056&oat_content=url", Icon: MessageCircle },
   { name: "Substack", handle: "moriyuka", href: "https://substack.com/", Icon: Send },
 ];
 

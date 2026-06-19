@@ -9,10 +9,10 @@ const sitemap = [
 ];
 
 const footerSocials = [
-  { href: "https://instagram.com/moriyukapi", Icon: Instagram, label: "Instagram" },
-  { href: "https://youtube.com/", Icon: Youtube, label: "YouTube" },
+  { href: "https://www.instagram.com/moriyukapi/", Icon: Instagram, label: "Instagram" },
+  { href: "https://www.youtube.com/@moriyukapis", Icon: Youtube, label: "YouTube" },
   { href: "https://x.com/namako_moriyuka", Icon: Hash, label: "X" },
-  { href: "https://line.me/", Icon: MessageCircle, label: "LINE" },
+  { href: "https://line.me/R/ti/p/@346bmdxx?ts=04022056&oat_content=url", Icon: MessageCircle, label: "LINE" },
 ];
 
 export default function Footer() {
