@@ -6,7 +6,6 @@ import {
   FileText,
   Music2,
   Send,
-  Hash,
 } from "lucide-react";
 
 const socials = [
@@ -14,7 +13,6 @@ const socials = [
   { name: "TikTok", handle: "@moriyukapi", href: "https://www.tiktok.com/@moriyukapi", Icon: Music2 },
   { name: "YouTube", handle: "@moriyukapis", href: "https://www.youtube.com/@moriyukapis", Icon: Youtube },
   { name: "Threads", handle: "@moriyukapi", href: "https://www.threads.com/@moriyukapi", Icon: AtSign },
-  { name: "X", handle: "@namako_moriyuka", href: "https://x.com/namako_moriyuka", Icon: Hash },
   { name: "NOTE", handle: "@moriyukapi", href: "https://note.com/moriyukapi", Icon: FileText },
   { name: "LINE公式", handle: "友だち追加", href: "https://line.me/R/ti/p/@346bmdxx?ts=04022056&oat_content=url", Icon: MessageCircle },
   { name: "Substack", handle: "フォロー", href: "https://substack.com/@1234291644", Icon: Send },
@@ -31,7 +29,7 @@ export default function SocialLinks() {
           <h2 className="section-title">SNSで日々の様子を発信中</h2>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:gap-4 lg:grid-cols-8">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:gap-4 lg:grid-cols-7">
           {socials.map(({ name, handle, href, Icon }) => (
             <a
               key={name}
