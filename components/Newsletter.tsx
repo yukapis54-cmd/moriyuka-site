@@ -51,7 +51,7 @@ export default function Newsletter() {
             島暮らし1人事業
           </h2>
           <p className="mt-4 text-sm leading-relaxed text-white/90 md:text-base">
-            島での暮らし、ナマコ事業、SNS発信の裏側を月数回のメルマガでお届け。
+            島での暮らし、ナマコ事業、SNS発信の裏側を月数回のメルマガでお届け。脱サラ・SNS・EC・LINE公式のノウハウをまとめた無料ガイドも、登録者へ先行配布予定です。
             <br className="hidden md:block" />
             登録は無料です。
           </p>
@@ -78,7 +78,7 @@ export default function Newsletter() {
                 disabled={status === "loading"}
                 className="rounded-full bg-sand-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-sand-600 disabled:opacity-60"
               >
-                {status === "loading" ? "送信中…" : "登録する"}
+                {status === "loading" ? "送信中…" : "事前登録する"}
               </button>
             </form>
           )}

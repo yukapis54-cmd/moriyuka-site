@@ -4,7 +4,6 @@ import Kpi from "@/components/Kpi";
 import PromoBanner from "@/components/PromoBanner";
 import About from "@/components/About";
 import Products from "@/components/Products";
-import FreeGuides from "@/components/FreeGuides";
 import Newsletter from "@/components/Newsletter";
 import SocialLinks from "@/components/SocialLinks";
 import Contact from "@/components/Contact";
@@ -19,7 +18,6 @@ export default function Home() {
       <PromoBanner />
       <About />
       <Products />
-      <FreeGuides />
       <Newsletter />
       <SocialLinks />
       <Contact />
