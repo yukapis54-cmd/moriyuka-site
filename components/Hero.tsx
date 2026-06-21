@@ -31,7 +31,7 @@ export default function Hero() {
         <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-xl md:aspect-[4/5]">
           <Image
             src="/images/hero.jpg"
-            alt="作業着でガッツポーズするもりゆか"
+            alt="作業着姿で微笑むもりゆか"
             fill
             priority
             className="object-cover"
