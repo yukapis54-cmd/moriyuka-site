@@ -7,7 +7,7 @@ export default function About() {
         <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-lg">
           <Image
             src="/images/about.jpg"
-            alt="瀬戸内の海辺で過ごすもりゆか"
+            alt="作業場でナマコを仕込むもりゆか"
             fill
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 50vw"
