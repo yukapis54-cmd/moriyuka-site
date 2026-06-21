@@ -3,23 +3,23 @@ import { Megaphone, ShoppingCart, MessageSquare, Mic } from "lucide-react";
 const offers = [
   {
     Icon: Megaphone,
-    title: "SNS運用・発信サポート",
-    desc: "0→1万人超を実現した発信ノウハウで、伸びるアカウント設計・運用をご支援します。",
+    title: "SNS運用・発信のサポート",
+    desc: "AIも使いながら、0→1万人超まで伸ばした発信のコツを一緒に。専門用語ぬきで進めます。",
   },
   {
     Icon: ShoppingCart,
     title: "EC・ネット通販の立ち上げ",
-    desc: "ホームページもない状態から1人で立ち上げた経験をもとに、販売の仕組みづくりを伴走します。",
+    desc: "ホームページもないところから1人で立ち上げた経験で、ネット販売の始め方をやさしく伴走します。",
   },
   {
     Icon: MessageSquare,
-    title: "LINE公式アカウント構築",
-    desc: "ファンを顧客に変えるLINE公式の設計・運用をサポートします。",
+    title: "LINE公式アカウント",
+    desc: "ファンをお客さんに変えるLINEの作り方・続け方を、ムリなくサポートします。",
   },
   {
     Icon: Mic,
     title: "講演・セミナー・取材",
-    desc: "脱サラ・離島Uターン・SNS発信のリアルを、講演や取材でお話しします。",
+    desc: "脱サラ・離島Uターン・AI×SNSのリアルを、肩の力を抜いてお話しします。",
   },
 ];
 
@@ -32,10 +32,10 @@ export default function Business() {
             FOR BUSINESS
           </p>
           <h2 className="text-2xl font-bold md:text-4xl">
-            その実績、御社の発信と販売に。
+            AIを味方に。非エンジニアでも、ここまでできました。
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-white/80 md:text-base">
-            脱サラから6ヶ月で、SNS総フォロワー16,400人・月間105万回再生。ホームページもない状態から、たった1人でEC通販を立ち上げました。その実体験で培ったノウハウで、企業・事業者さまの発信と販売を本気でご支援します。
+            わたし自身、プログラミングはまったくできません。それでもAIを相棒にしたら、脱サラから6ヶ月でSNSフォロワー16,400人・月間105万回再生、ホームページもないところから1人でネット通販まで立ち上げられました。「むずかしそう」を「これならできそう」に。企業・事業者さんの発信や販売も、いっしょに前へ進めます。
           </p>
         </div>
 
@@ -59,7 +59,7 @@ export default function Business() {
             href="#contact"
             className="inline-flex items-center justify-center rounded-full bg-sand-500 px-8 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-sand-600 md:text-base"
           >
-            お仕事のご相談・ご依頼はこちら
+            まずは気軽にご相談ください
           </a>
         </div>
       </div>
