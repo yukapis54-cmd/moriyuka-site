@@ -1,8 +1,8 @@
 const items = [
   { label: "SNS総フォロワー", value: "14,000+" },
-  { label: "LINE登録者", value: "263人" },
-  { label: "ECサイト", value: "setouchi-seafood.com" },
-  { label: "運営SNS", value: "7プラットフォーム" },
+  { label: "月間SNS閲覧数", value: "50万回超え" },
+  { label: "EC販売実績", value: "100セット以上" },
+  { label: "事業立ち上げ", value: "6ヶ月目" },
 ];
 
 export default function Kpi() {
