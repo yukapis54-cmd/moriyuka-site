@@ -1,5 +1,5 @@
 const items = [
-  { label: "SNS総フォロワー", value: "14,000+" },
+  { label: "SNS総フォロワー", value: "16,000+" },
   { label: "月間SNS閲覧数", value: "105万回以上" },
   { label: "EC販売実績", value: "100セット以上" },
   { label: "事業立ち上げ", value: "6ヶ月目" },
