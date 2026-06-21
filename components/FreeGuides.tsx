@@ -17,12 +17,13 @@ export default function FreeGuides() {
           </div>
           <p className="text-lg font-bold text-ocean-950">準備中です</p>
           <p className="mt-3 text-sm leading-relaxed text-ocean-800 md:text-base">
-            脱サラ・SNS・EC・LINE公式のノウハウをまとめた無料ガイドを準備しています。
-            公開までもう少しお待ちください。メルマガにご登録いただくと、完成しだいいち早くお届けします。
+            メルマガ「島から、もりゆか」6/29 創刊。
+            脱サラ・SNS・EC・LINE公式のノウハウをまとめた無料ガイドも準備中です。
+            事前登録いただいた方に、完成しだいいち早くお届けします。
           </p>
           <div className="mt-7">
             <a href="#newsletter" className="btn-accent">
-              メルマガで先行案内を受け取る
+              事前登録する
             </a>
           </div>
         </div>
