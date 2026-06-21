@@ -58,7 +58,7 @@ export default function Newsletter() {
 
           {submitted ? (
             <p className="mt-8 rounded-full bg-white/15 px-6 py-3 text-sm font-medium">
-              ご登録ありがとうございます！確認メールをご確認ください。
+              ご登録ありがとうございます！
             </p>
           ) : (
             <form
