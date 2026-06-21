@@ -7,7 +7,6 @@ const links = [
   { href: "#about", label: "プロフィール" },
   { href: "#newsletter", label: "メルマガ" },
   { href: "#products", label: "通販" },
-  { href: "#business", label: "事業者の方へ" },
   { href: "#contact", label: "お問い合わせ" },
 ];
 
