@@ -24,19 +24,19 @@ export default function About() {
             新しい働き方の実験
           </h2>
           <p className="mt-6 text-base leading-relaxed text-ocean-900 md:text-lg">
-            愛媛の離島で生まれ育ち、島を出て大阪のIT企業へ就職。安定した会社員生活と年収600万円——それでも心に残っていたのは、家業のナマコ屋と、人口が減りゆくふるさとの島のことでした。
+            愛媛の離島で生まれ育ち、島を出て大阪のIT企業へ就職。安定した会社員生活と年収600万円——それでも心に残っていたのは、実家のナマコと、人口が減りゆくふるさとの島のことでした。
           </p>
           <p className="mt-4 text-base leading-relaxed text-ocean-900 md:text-lg">
-            「家業のナマコを継ぎ、この島をもう一度盛り上げたい」。その思いで会社を辞めてUターン。いまはSNSでの発信と自社ECでの通販を軸に、瀬戸内の天然ナマコを日本全国の食卓へ届ける挑戦を続けています。
+            「実家のナマコを全国に届けて、この島をもう一度盛り上げたい」。その思いで会社を辞めてUターン。いまはSNSでの発信と自社ECでの通販を軸に、瀬戸内の天然ナマコを日本全国の食卓へ届ける挑戦を続けています。
           </p>
           <ul className="mt-6 space-y-2 text-sm text-ocean-800 md:text-base">
             <li className="flex items-start gap-2">
               <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-sand-500" />
-              7つのSNSで発信、総フォロワー14,000人超
+              8つのSNSで発信、総フォロワー16,400人超
             </li>
             <li className="flex items-start gap-2">
               <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-sand-500" />
-              公式LINE登録263人／自社EC「setouchi-seafood.com」で全国へ
+              ホームページもなかったところから、0から1人で通販を立ち上げ
             </li>
             <li className="flex items-start gap-2">
               <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-sand-500" />
