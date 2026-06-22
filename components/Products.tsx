@@ -35,7 +35,7 @@ export default function Products() {
             </p>
             <div className="mt-8">
               <a
-                href="https://setouchi-seafood.com"
+                href="https://setouchi-seafood.com/products/namako"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-primary"
