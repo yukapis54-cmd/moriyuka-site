@@ -42,7 +42,7 @@ export default function Hero() {
 
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-24 left-1/2 h-72 w-[140%] -translate-x-1/2 rounded-[100%] bg-ocean-50"
+        className="pointer-events-none absolute -bottom-24 left-1/2 hidden h-72 w-[140%] -translate-x-1/2 rounded-[100%] bg-ocean-50 md:block"
       />
     </section>
   );
