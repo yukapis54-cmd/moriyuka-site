@@ -3,9 +3,6 @@
 import { useState } from "react";
 import { Mail } from "lucide-react";
 
-// Kit (ConvertKit) のフォームID。Vercel / .env.local の環境変数で設定する。
-const FORM_ID = process.env.NEXT_PUBLIC_CONVERTKIT_FORM_ID;
-
 export default function Newsletter() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">(
@@ -14,22 +11,14 @@ export default function Newsletter() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!FORM_ID) {
-      setStatus("error");
-      return;
-    }
     setStatus("loading");
     try {
-      const res = await fetch(
-        `https://app.kit.com/forms/${FORM_ID}/subscriptions`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify({ email_address: email }),
-        }
-      );
-      const data = await res.json().catch(() => ({}));
-      setStatus(res.ok && data.status !== "error" ? "success" : "error");
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      setStatus(res.ok ? "success" : "error");
     } catch {
       setStatus("error");
     }
