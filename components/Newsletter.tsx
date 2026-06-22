@@ -13,12 +13,16 @@ export default function Newsletter() {
     e.preventDefault();
     setStatus("loading");
     try {
-      const res = await fetch("/api/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      setStatus(res.ok ? "success" : "error");
+      const res = await fetch(
+        "https://app.kit.com/forms/9585444/subscriptions",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({ email_address: email }),
+        }
+      );
+      const data = await res.json().catch(() => ({}));
+      setStatus(res.ok && data.status !== "error" ? "success" : "error");
     } catch {
       setStatus("error");
     }
