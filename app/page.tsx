@@ -1,7 +1,6 @@
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import Kpi from "@/components/Kpi";
-import PromoBanner from "@/components/PromoBanner";
 import About from "@/components/About";
 import Products from "@/components/Products";
 import Newsletter from "@/components/Newsletter";
@@ -16,7 +15,6 @@ export default function Home() {
       <Nav />
       <Hero />
       <Kpi />
-      <PromoBanner />
       <About />
       <Products />
       <Newsletter />
