@@ -48,7 +48,7 @@ export default function Contact() {
             </p>
             <h2 className="section-title">お問い合わせ</h2>
             <p className="mt-4 text-sm leading-relaxed text-ocean-800 md:text-base">
-              お仕事のご依頼、取材、コラボのご相談はこちらから。
+              お仕事のご依頼、コラボのご相談はこちらから。
             </p>
           </div>
 
