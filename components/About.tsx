@@ -43,16 +43,6 @@ export default function About() {
               瀬戸内・愛媛の離島から天然ナマコを産地直送
             </li>
           </ul>
-          <div className="mt-8">
-            <a
-              href="https://note.com/moriyukapi"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-primary"
-            >
-              noteで詳しいストーリーを読む
-            </a>
-          </div>
         </div>
       </div>
     </section>
