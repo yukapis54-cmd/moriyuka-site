@@ -5,7 +5,7 @@ import { Menu, X } from "lucide-react";
 
 const links = [
   { href: "#about", label: "プロフィール" },
-  { href: "#newsletter", label: "メルマガ" },
+  { href: "#newsletter", label: "公式LINE" },
   { href: "#products", label: "通販" },
   { href: "#contact", label: "お問い合わせ" },
 ];

@@ -11,9 +11,8 @@ import {
 
 const sitemap = [
   { href: "#about", label: "プロフィール" },
-  { href: "#newsletter", label: "メルマガ" },
+  { href: "#newsletter", label: "公式LINE" },
   { href: "#products", label: "通販" },
-  { href: "#guides", label: "無料ガイド" },
   { href: "#contact", label: "お問い合わせ" },
 ];
 

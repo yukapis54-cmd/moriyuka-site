@@ -20,7 +20,7 @@ export default function Hero() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a href="#newsletter" className="btn-accent">
-              メルマガ登録
+              公式LINEを追加
             </a>
             <a href="#about" className="btn-secondary">
               プロフィールを見る
