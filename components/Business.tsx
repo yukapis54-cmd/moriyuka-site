@@ -1,4 +1,4 @@
-import { Megaphone, ShoppingCart, MessageSquare, Mic } from "lucide-react";
+import { Megaphone, ShoppingCart, MessageSquare, Globe } from "lucide-react";
 
 const offers = [
   {
@@ -17,9 +17,9 @@ const offers = [
     desc: "ファンをお客さんに変えるLINEの作り方・続け方を、ムリなくサポートします。",
   },
   {
-    Icon: Mic,
-    title: "講演・セミナー・取材",
-    desc: "脱サラ・離島Uターン・AI×SNSのリアルを、肩の力を抜いてお話しします。",
+    Icon: Globe,
+    title: "ホームページ作成サポート",
+    desc: "コードが書けなくても大丈夫。AIを相棒に、あなたの公式サイトを0から一緒に作ります。",
   },
 ];
 
