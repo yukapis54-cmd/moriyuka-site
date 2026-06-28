@@ -39,15 +39,14 @@ export default function Newsletter() {
           </p>
           <h2 className="mt-3 text-2xl font-bold md:text-3xl">島暮らし1人事業</h2>
           <p className="mt-4 text-sm leading-relaxed text-white/90 md:text-base">
-            島での暮らし、ナマコ事業、SNS発信の裏側をお届け。
-            <br className="hidden md:block" />
-            まずは公式LINEがおすすめです（登録は無料）。
+            発信する内容で分けています。受け取りたい方をどうぞ（どちらも登録無料）。
           </p>
 
           {/* 公式LINE（メイン） */}
           <div className="mx-auto mt-8 max-w-md rounded-2xl bg-white/10 p-6">
-            <p className="text-sm font-semibold text-white">
-              公式LINEで受け取る（おすすめ）
+            <p className="text-base font-bold text-white">公式LINE</p>
+            <p className="mt-1 text-sm text-white/80">
+              ナマコの入荷・通販・お得な情報をお届け
             </p>
             <a
               href="https://lin.ee/5obSpak"
@@ -62,8 +61,9 @@ export default function Newsletter() {
 
           {/* メルマガ（サブ） */}
           <div className="mx-auto mt-6 max-w-md">
-            <p className="text-sm text-white/80">
-              メールで受け取りたい方はこちら（メルマガ）
+            <p className="text-base font-bold text-white">メルマガ（メール）</p>
+            <p className="mt-1 text-sm text-white/80">
+              島暮らし・フリーランス・1人事業のリアルをお届け
             </p>
             {submitted ? (
               <p className="mt-4 rounded-full bg-white/15 px-6 py-3 text-sm font-medium">
