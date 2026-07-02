@@ -15,7 +15,7 @@ export default function Newsletter() {
             公式LINEで、島から。
           </h2>
           <p className="mt-4 text-sm leading-relaxed text-white/90 md:text-base">
-            ナマコの入荷・通販・お得な情報を公式LINEでお届け。
+            ナマコの入荷・通販・お得な情報をお届け。島暮らしの質問なども、公式LINEから直接DMできます。
             <br className="hidden md:block" />
             友だち追加は無料です。
           </p>
