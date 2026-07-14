@@ -24,10 +24,7 @@ export default function Products() {
           </div>
 
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-sand-600">
-              SIGNATURE
-            </p>
-            <h3 className="mt-2 text-xl font-bold text-ocean-950 md:text-2xl">
+            <h3 className="text-xl font-bold text-ocean-950 md:text-2xl">
               こだわりナマコ食べ比べセット
             </h3>
             <p className="mt-4 text-sm leading-relaxed text-ocean-900 md:text-base">
