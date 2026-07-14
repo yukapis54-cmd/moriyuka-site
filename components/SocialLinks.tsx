@@ -19,7 +19,7 @@ const socials = [
   { name: "NOTE", handle: "@moriyukapi", href: "https://note.com/moriyukapi", Icon: FileText },
   { name: "LINE公式", handle: "友だち追加", href: "https://lin.ee/5obSpak", Icon: MessageCircle },
   { name: "Substack", handle: "フォロー", href: "https://substack.com/@1234291644", Icon: Send },
-  { name: "Podcast", handle: "龍の雲を見た", href: "https://open.spotify.com/show/7oSt6iiHur0BCj0UpBiACh", Icon: Podcast },
+  { name: "Podcast", handle: "島で1人起業", href: "https://open.spotify.com/show/7oSt6iiHur0BCj0UpBiACh", Icon: Podcast },
 ];
 
 export default function SocialLinks() {
