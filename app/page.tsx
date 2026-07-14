@@ -5,7 +5,6 @@ import About from "@/components/About";
 import Products from "@/components/Products";
 import Newsletter from "@/components/Newsletter";
 import SocialLinks from "@/components/SocialLinks";
-import Podcast from "@/components/Podcast";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
@@ -19,7 +18,6 @@ export default function Home() {
       <Products />
       <Newsletter />
       <SocialLinks />
-      <Podcast />
       <Contact />
       <Footer />
     </main>

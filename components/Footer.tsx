@@ -7,6 +7,7 @@ import {
   FileText,
   MessageCircle,
   Send,
+  Podcast,
 } from "lucide-react";
 
 const sitemap = [
@@ -25,6 +26,7 @@ const footerSocials = [
   { href: "https://note.com/moriyukapi", Icon: FileText, label: "note" },
   { href: "https://lin.ee/5obSpak", Icon: MessageCircle, label: "LINE" },
   { href: "https://substack.com/@1234291644", Icon: Send, label: "Substack" },
+  { href: "https://open.spotify.com/show/7oSt6iiHur0BCj0UpBiACh", Icon: Podcast, label: "Podcast" },
 ];
 
 export default function Footer() {
