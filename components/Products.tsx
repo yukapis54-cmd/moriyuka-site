@@ -31,7 +31,7 @@ export default function Products() {
               こだわりナマコ食べ比べセット
             </h3>
             <p className="mt-4 text-sm leading-relaxed text-ocean-900 md:text-base">
-              瀬戸内の島で水揚げした天然ナマコを、加工方法別に食べ比べできるセット。贈答にも自家用にも。
+              瀬戸内の島で水揚げした天然ナマコ。旬にとれたてのものを詰め込みました。
             </p>
             <div className="mt-8">
               <a
@@ -41,7 +41,7 @@ export default function Products() {
                 className="btn-primary"
               >
                 <ShoppingBag size={18} className="mr-2" />
-                setouchi-seafood.com で購入
+                公式通販サイトはこちら
               </a>
             </div>
           </div>
