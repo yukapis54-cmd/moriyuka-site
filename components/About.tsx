@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function About() {
   return (
-    <section id="about" className="section bg-ocean-50/40">
+    <section id="about" className="section bg-white">
       <div className="container-base grid items-center gap-10 md:grid-cols-2 md:gap-16">
         <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-lg">
           <Image

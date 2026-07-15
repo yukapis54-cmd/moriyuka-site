@@ -42,7 +42,7 @@ export default function Contact() {
     <section id="contact" className="section bg-white">
       <div className="container-base">
         <div className="mx-auto max-w-2xl">
-          <div className="mb-10 text-center md:mb-14">
+          <div className="mb-8 text-center md:mb-10">
             <p className="mb-3 text-sm font-medium tracking-widest text-sand-600">
               CONTACT
             </p>
