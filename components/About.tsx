@@ -27,7 +27,7 @@ export default function About() {
             愛媛の離島で生まれ育ち、島を出て大阪のIT企業へ就職。安定した会社員生活と年収600万円——それでも心に残っていたのは、実家のナマコと、人口が減りゆくふるさとの島のことでした。
           </p>
           <p className="mt-4 text-base leading-relaxed text-ocean-900 md:text-lg">
-            「実家のナマコを全国に届けて、この島をもう一度盛り上げたい」。その思いで会社を辞めてUターン。いまはSNSでの発信と自社ECでの通販を軸に、瀬戸内の天然ナマコを日本全国の食卓へ届ける挑戦を続けています。
+            「実家のナマコを全国に届けて、この島をもう一度盛り上げたい」。その思いで会社を辞めてUターン。0から通販事業を立ち上げ、SNSでの発信とあわせて、瀬戸内の天然ナマコを日本全国の食卓へ届ける挑戦を続けています。
           </p>
           <ul className="mt-6 space-y-2 text-sm text-ocean-800 md:text-base">
             <li className="flex items-start gap-2">

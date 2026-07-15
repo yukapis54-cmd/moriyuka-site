@@ -22,8 +22,13 @@ export default function Hero() {
             <a href="#newsletter" className="btn-accent">
               公式LINEを追加
             </a>
-            <a href="#about" className="btn-secondary">
-              プロフィールを見る
+            <a
+              href="https://setouchi-seafood.com/products/namako"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-secondary"
+            >
+              通販サイトを見る
             </a>
           </div>
         </div>
