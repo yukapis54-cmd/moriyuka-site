@@ -10,7 +10,7 @@ const notoSansJP = Noto_Sans_JP({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://moriyuka-site.vercel.app"),
+  metadataBase: new URL("https://moriyuka-site.moriyukasite.workers.dev"),
   title: "MORIYUKA | 愛媛の離島から、ナマコと向き合う日々を。",
   description:
     "脱サラ・Uターン・SNS発信のリアル。愛媛の離島から実家のナマコを全国へ届ける、もりゆかの公式サイト。",
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     title: "MORIYUKA | 愛媛の離島から、ナマコと向き合う日々を。",
     description:
       "脱サラ・Uターン・SNS発信のリアル。愛媛の離島から天然ナマコを産地直送。",
-    url: "https://moriyuka-site.vercel.app",
+    url: "https://moriyuka-site.moriyukasite.workers.dev",
     siteName: "MORIYUKA",
     images: [
       { url: "/images/og.jpg", width: 1200, height: 630, alt: "MORIYUKA もりゆか" },
