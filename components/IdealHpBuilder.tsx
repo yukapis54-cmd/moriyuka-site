@@ -3,6 +3,7 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import PHOTO_QUERIES from "../data/photo-queries.json";
+import { patternsFor, promptFor, type UiPattern } from "./uiPatterns";
 
 /* ================================ questions =============================== */
 
@@ -3402,6 +3403,7 @@ export default function IdealHpBuilder() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const serifRef = useRef<HTMLSpanElement | null>(null);
 
+  const [copied, setCopied] = useState(false);
   const [photoVersion, setPhotoVersion] = useState(0);
   const [variant, setVariant] = useState(0);
   const previewRef = useRef<HTMLCanvasElement | null>(null);
@@ -3410,6 +3412,25 @@ export default function IdealHpBuilder() {
   const complete = useMemo(() => QUESTIONS.every((q) => answers[q.key]), [answers]);
   const done = step >= QUESTIONS.length && complete;
   const current = QUESTIONS[Math.min(step, QUESTIONS.length - 1)];
+
+  /** 完成イメージが使っている UI パターンと、そのまま AI に貼れる指示文 */
+  const patterns = useMemo(() => patternsFor(merged), [merged]);
+  const aiPrompt = useMemo(() => {
+    const toneLabel = QUESTIONS.find((q) => q.key === "tone")?.options.find((o) => o.id === merged.tone)?.label ?? "";
+    return promptFor(merged, siteName.trim(), toneLabel, PALETTES[merged.palette]?.name ?? "");
+  }, [merged, siteName]);
+
+  const copyPrompt = useCallback(() => {
+    void navigator.clipboard
+      .writeText(aiPrompt)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch(() => {
+        /* 権限が無い環境ではテキストを手で選んでもらう */
+      });
+  }, [aiPrompt]);
 
   const render = useCallback(() => {
     VARIANT = variant;
@@ -3794,8 +3815,78 @@ export default function IdealHpBuilder() {
               </p>
             )}
           </div>
+
+          <PatternGuide patterns={patterns} prompt={aiPrompt} onCopy={copyPrompt} copied={copied} />
         </div>
       )}
     </div>
+  );
+}
+
+/**
+ * 「あのUI、なんて頼めばいい？」を解消するセクション。
+ * 完成イメージに使われている型に名前を与え、そのまま AI に貼れる指示文まで作る。
+ */
+function PatternGuide({
+  patterns,
+  prompt,
+  onCopy,
+  copied,
+}: {
+  patterns: UiPattern[];
+  prompt: string;
+  onCopy: () => void;
+  copied: boolean;
+}) {
+  const categories = Array.from(new Set(patterns.map((p) => p.category)));
+  return (
+    <section className="mx-auto mt-12 max-w-3xl">
+      <h3 className="text-xl font-bold text-slate-900 sm:text-2xl">この画面の「部品の名前」</h3>
+      <p className="mt-2 text-sm leading-relaxed text-slate-500">
+        作りたい画面が浮かんでも、名前を知らないと頼めません。上のイメージに使われている型を並べました。
+        この名前で伝えれば、AI にも制作会社にも「それっぽい画面」ではなく必要なものが届きます。
+      </p>
+
+      <div className="mt-6 space-y-6">
+        {categories.map((cat) => (
+          <div key={cat}>
+            <p className="text-xs font-semibold tracking-widest text-ocean-700">{cat}</p>
+            <ul className="mt-2 divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
+              {patterns
+                .filter((p) => p.category === cat)
+                .map((p) => (
+                  <li key={p.en} className="px-4 py-3">
+                    <p className="flex flex-wrap items-baseline gap-x-2">
+                      <span className="font-mono text-sm font-bold text-slate-900">{p.en}</span>
+                      <span className="text-xs text-slate-500">{p.ja}</span>
+                    </p>
+                    <p className="mt-1 text-sm leading-relaxed text-slate-600">{p.desc}</p>
+                  </li>
+                ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-8 rounded-2xl border border-ocean-200 bg-ocean-50/60 p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="font-bold text-slate-900">そのままAIに貼れる指示文</p>
+            <p className="mt-1 text-xs text-slate-500">
+              ChatGPT や Claude に貼り付けると、この構成のページを作らせられます。
+            </p>
+          </div>
+          <button
+            onClick={onCopy}
+            className="rounded-xl bg-ocean-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-ocean-700"
+          >
+            {copied ? "コピーしました" : "指示文をコピー"}
+          </button>
+        </div>
+        <pre className="mt-4 max-h-72 overflow-auto rounded-xl bg-white p-4 text-xs leading-relaxed text-slate-700 ring-1 ring-slate-200">
+          {prompt}
+        </pre>
+      </div>
+    </section>
   );
 }
