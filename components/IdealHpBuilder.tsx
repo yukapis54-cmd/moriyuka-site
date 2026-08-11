@@ -3,7 +3,7 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import PHOTO_QUERIES from "../data/photo-queries.json";
-import { patternsFor, promptFor, type UiPattern } from "./uiPatterns";
+import { patternsFor, promptFor, reasonsFor, type DesignReason, type UiPattern } from "./uiPatterns";
 
 /* ================================ questions =============================== */
 
@@ -3415,6 +3415,10 @@ export default function IdealHpBuilder() {
 
   /** 完成イメージが使っている UI パターンと、そのまま AI に貼れる指示文 */
   const patterns = useMemo(() => patternsFor(merged), [merged]);
+  const reasons = useMemo(
+    () => reasonsFor(merged, PALETTES[merged.palette]?.name ?? ""),
+    [merged],
+  );
   const aiPrompt = useMemo(() => {
     const toneLabel = QUESTIONS.find((q) => q.key === "tone")?.options.find((o) => o.id === merged.tone)?.label ?? "";
     return promptFor(merged, siteName.trim(), toneLabel, PALETTES[merged.palette]?.name ?? "");
@@ -3816,7 +3820,13 @@ export default function IdealHpBuilder() {
             )}
           </div>
 
-          <PatternGuide patterns={patterns} prompt={aiPrompt} onCopy={copyPrompt} copied={copied} />
+          <PatternGuide
+            patterns={patterns}
+            reasons={reasons}
+            prompt={aiPrompt}
+            onCopy={copyPrompt}
+            copied={copied}
+          />
         </div>
       )}
     </div>
@@ -3829,11 +3839,13 @@ export default function IdealHpBuilder() {
  */
 function PatternGuide({
   patterns,
+  reasons,
   prompt,
   onCopy,
   copied,
 }: {
   patterns: UiPattern[];
+  reasons: DesignReason[];
   prompt: string;
   onCopy: () => void;
   copied: boolean;
@@ -3841,7 +3853,23 @@ function PatternGuide({
   const categories = Array.from(new Set(patterns.map((p) => p.category)));
   return (
     <section className="mx-auto mt-12 max-w-3xl">
-      <h3 className="text-xl font-bold text-slate-900 sm:text-2xl">この画面の「部品の名前」</h3>
+      <h3 className="text-xl font-bold text-slate-900 sm:text-2xl">「なんか良い」の正体</h3>
+      <p className="mt-2 text-sm leading-relaxed text-slate-500">
+        上のイメージが良く見えるとしたら、それはセンスではなく理由があります。種明かしします。
+      </p>
+      <ol className="mt-6 space-y-4">
+        {reasons.map((r, i) => (
+          <li key={r.title} className="rounded-2xl border border-slate-200 bg-white p-5">
+            <p className="flex items-baseline gap-3">
+              <span className="font-mono text-sm text-ocean-600">{String(i + 1).padStart(2, "0")}</span>
+              <span className="font-bold text-slate-900">{r.title}</span>
+            </p>
+            <p className="mt-2 pl-8 text-sm leading-relaxed text-slate-600">{r.body}</p>
+          </li>
+        ))}
+      </ol>
+
+      <h3 className="mt-14 text-xl font-bold text-slate-900 sm:text-2xl">この画面の「部品の名前」</h3>
       <p className="mt-2 text-sm leading-relaxed text-slate-500">
         作りたい画面が浮かんでも、名前を知らないと頼めません。上のイメージに使われている型を並べました。
         この名前で伝えれば、AI にも制作会社にも「それっぽい画面」ではなく必要なものが届きます。
