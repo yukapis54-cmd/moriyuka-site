@@ -89,7 +89,10 @@ export async function GET(request: Request) {
         headers: { "User-Agent": "moriyuka-site/1.0 (ideal-hp mockup generator)" },
         redirect: "manual",
         signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
-        next: { revalidate: 86400 },
+        // Next のデータキャッシュには載せない。画像本体を丸ごとメモリに抱えることになり、
+        // Workers では 503 / プロトコルエラーで落ちる。配信側のキャッシュは下の
+        // Cache-Control ヘッダーに任せる。
+        cache: "no-store",
       });
       if (res.status < 300 || res.status >= 400) break;
       const loc = res.headers.get("location");
@@ -113,21 +116,10 @@ export async function GET(request: Request) {
     // SVG は同一オリジンでスクリプトが動くため中継しない
     if (!RASTER_TYPES.has(type)) return new NextResponse("unsupported image type", { status: 415 });
 
-    let transferred = 0;
-    const capped = res.body.pipeThrough(
-      new TransformStream<Uint8Array, Uint8Array>({
-        transform(chunk, controller) {
-          transferred += chunk.byteLength;
-          if (transferred > MAX_BYTES) {
-            controller.error(new Error("image too large"));
-            return;
-          }
-          controller.enqueue(chunk);
-        },
-      }),
-    );
-
-    return new NextResponse(capped, {
+    // 本体はそのまま素通しする。1バイトずつ数える TransformStream を挟むと
+    // Worker が全チャンクを触ることになり、同時に何枚も読むと限界を超えて落ちる。
+    // サイズ上限は上の content-length チェックで担保する。
+    return new NextResponse(res.body, {
       headers: {
         "Content-Type": type,
         "Content-Security-Policy": "default-src 'none'; sandbox",

@@ -72,7 +72,7 @@ async function searchUnsplash(q: string, n: number, orientation: string, key: st
     const json = (await res.json()) as { results?: UnsplashPhoto[] };
     return (json.results || []).map((r) => ({
       id: r.id,
-      url: proxied(r.urls.regular),
+      url: proxied(lighten(r.urls.regular)),
       thumb: proxied(r.urls.small),
       author: r.user?.name ?? "Unsplash",
       authorUrl: withUtm(r.user?.links?.html ?? "https://unsplash.com"),
@@ -101,7 +101,8 @@ async function searchPexels(q: string, n: number, orientation: string, key: stri
     const json = (await res.json()) as { photos?: PexelsPhoto[] };
     return (json.photos || []).map((r) => ({
       id: String(r.id),
-      url: proxied(r.src.large2x || r.src.large),
+      // large2x は 1枚 1.5MB を超える。1診断で20枚読むので等倍の large で十分
+      url: proxied(r.src.large),
       thumb: proxied(r.src.medium),
       author: r.photographer,
       authorUrl: r.photographer_url,
@@ -167,8 +168,36 @@ function withUtm(url: string) {
   }
 }
 
-/** 画像は必ず自前プロキシ経由にする（canvas を汚染させないため） */
+/**
+ * Unsplash の regular は q=80 で 1枚 1.5MB を超えることがある。
+ * 1回の診断で20枚読むので、モックアップに十分な画質まで落とす。
+ */
+function lighten(url: string): string {
+  try {
+    const u = new URL(url);
+    u.searchParams.set("q", "62");
+    u.searchParams.set("w", "1080");
+    return u.toString();
+  } catch {
+    return url;
+  }
+}
+
+/**
+ * canvas を汚染させないために CORS が要る。
+ * Unsplash / Pexels / Pixabay の CDN は `Access-Control-Allow-Origin: *` を返すので、
+ * 自前プロキシを挟まず直接読ませる。1回の診断で20枚流すと Worker 側が限界に当たり、
+ * 503 やプロトコルエラーで写真が欠けるため。CORS を返さない供給元だけ中継する。
+ */
+const CORS_ENABLED_HOSTS = [".unsplash.com", ".pexels.com", ".pixabay.com"];
+
 function proxied(url: string) {
+  try {
+    const { hostname } = new URL(url);
+    if (CORS_ENABLED_HOSTS.some((h) => hostname.endsWith(h))) return url;
+  } catch {
+    /* 解析できない URL は安全側に倒してプロキシ経由にする */
+  }
   return `/api/photos/img?u=${encodeURIComponent(url)}`;
 }
 
