@@ -64,7 +64,7 @@ export default function Newsletter() {
             <div className="flex flex-col rounded-2xl bg-white/10 p-6">
               <p className="text-base font-bold">メルマガ</p>
               <p className="mt-1 flex-grow text-xs leading-relaxed text-white/75 md:text-sm">
-                ご登録で「愛媛県内でHPがいる理由」PDF冊子をプレゼント。島暮らしや1人事業のコラムも週1でお届け。
+                ご登録で「お店のWeb集客セルフ診断」をプレゼント。集客・HP・1人事業のヒントを週1でお届け。
               </p>
               {submitted ? (
                 <p className="mt-4 rounded-full bg-white/15 px-4 py-3 text-center text-sm font-medium">

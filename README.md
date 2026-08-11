@@ -59,3 +59,15 @@ npm run dev
 
 - フォーム（メルマガ / お問い合わせ）は見た目のみで送信先未接続。Formspree / Resend / 自作 API などに繋いでください。
 - フォントは Google Fonts の Noto Sans JP を `next/font/google` で読み込み。
+
+## 理想HP診断ページ（/ideal-hp）
+
+- 完成イメージの写真は Unsplash API から取得します。https://unsplash.com/developers で無料の Access Key を発行してください。
+- `.env.local` に `UNSPLASH_ACCESS_KEY=xxxxx` を設定して dev サーバーを再起動すると実写真に切り替わります。
+- 写真は Unsplash → Pexels → Pixabay → Openverse の順に取得を試みます。どれか1つでもキーがあれば実写真になります。
+  - Pexels: https://www.pexels.com/api/ （無料・審査なし・200req/時）→ `PEXELS_API_KEY`
+  - Pixabay: https://pixabay.com/api/docs/ （無料・ほぼ無制限）→ `PIXABAY_API_KEY`
+- 検索語は `data/photo-queries.json`（業種 × 空気感の味つけ）に集約。ページとウォームアップ script が同じ定義を読みます。
+- 取得した写真は `data/photo-cache.json` に永続保存され、以降は API を叩きません。`node scripts/warm-photos.mjs` で一括取得できます（dev サーバー起動が前提。`WARM_BASE` でポート変更可）。
+- Unsplash は Demo キーが 50req/時のため、1回のウォームアップでは大半が Pexels になります。Unsplash 比率を上げたい場合は、キャッシュから該当キーを消して1時間おきに再実行してください。
+- キーが1つも無い場合は Openverse（CC画像）、それも失敗すれば canvas 手描きにフォールバックします。

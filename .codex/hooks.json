@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/yukamori/moriyuka-site/.codex/hooks/audit.sh'",
+            "timeout": 300,
+            "statusMessage": "Codex + Codex で監査中…"
+          }
+        ]
+      }
+    ]
+  }
+}

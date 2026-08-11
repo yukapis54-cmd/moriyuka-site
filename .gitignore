@@ -34,3 +34,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Claude Code local settings & audit hook artifacts
+.claude/settings.local.json
+.claude/audit-log/
+.claude/.last-audit-sha
+
+# Codex ローカル設定（MCP の API キーを含むためコミットしない）
+.codex/config.toml
+.codex/audit-log/
+.codex/.last-audit-sha

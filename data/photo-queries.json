@@ -1,0 +1,94 @@
+{
+  "_note": "理想HP診断（/ideal-hp）の写真検索語。components/IdealHpBuilder.tsx と scripts/warm-photos.mjs が共有する。色名は入れない（色は配色側で作る）。雑誌っぽい写真が出るよう natural light / editorial / minimal などの語を添えている。",
+  "_note2": "味つけは4種類に絞ってある。検索語が増えるほど写真APIのレート制限に当たり、質の落ちる供給元まで落ちてしまうため。",
+  "styles": {
+    "soft": "natural light soft",
+    "editorial": "minimal editorial",
+    "vivid": "bright vivid",
+    "moody": "moody cinematic"
+  },
+  "styleByTone": {
+    "natural": "soft",
+    "patisserie": "soft",
+    "modern": "editorial",
+    "premium": "editorial",
+    "wamodern": "editorial",
+    "pop": "vivid",
+    "popwa": "vivid",
+    "cinema": "moody"
+  },
+  "industries": {
+    "seafood": {
+      "person": "fisherman portrait natural light editorial",
+      "product": "sashimi plate minimal food photography",
+      "scenery": "fishing harbour boats calm morning sea",
+      "interior": "fish market wooden crates stall"
+    },
+    "sweets": {
+      "person": "pastry chef hands dusting flour editorial",
+      "product": "japanese wagashi minimal still life",
+      "scenery": "small bakery storefront morning light",
+      "interior": "bakery counter warm wood natural light"
+    },
+    "restaurant": {
+      "person": "chef plating dish kitchen editorial",
+      "product": "ramen bowl overhead dark table",
+      "scenery": "izakaya alley lanterns night",
+      "interior": "restaurant counter seats warm light"
+    },
+    "salon": {
+      "person": "hair stylist working portrait editorial",
+      "product": "salon tools flat lay minimal",
+      "scenery": "minimal shop facade concrete",
+      "interior": "hair salon mirror bright minimal"
+    },
+    "craft": {
+      "person": "craftsman hands clay wheel editorial",
+      "product": "handmade ceramic bowl still life",
+      "scenery": "old town narrow street morning",
+      "interior": "pottery studio shelves natural light"
+    },
+    "pro": {
+      "person": "professional portrait office window light",
+      "product": "notebook pen desk minimal overhead",
+      "scenery": "modern architecture facade minimal",
+      "interior": "meeting room minimal daylight"
+    },
+    "school": {
+      "person": "workshop teacher explaining candid",
+      "product": "craft materials table overhead",
+      "scenery": "community building facade daylight",
+      "interior": "bright studio classroom minimal"
+    },
+    "stay": {
+      "person": "host welcoming guest doorway candid",
+      "product": "japanese breakfast tray still life",
+      "scenery": "countryside inn landscape mist",
+      "interior": "tatami room shoji natural light"
+    },
+    "construction": {
+      "person": "carpenter working timber editorial",
+      "product": "wood joinery detail close up",
+      "scenery": "modern wooden house exterior",
+      "interior": "minimal wooden living room daylight"
+    },
+    "clinic": {
+      "person": "therapist hands treatment candid",
+      "product": "clean treatment tools minimal",
+      "scenery": "clinic entrance minimal facade",
+      "interior": "treatment room white calm"
+    },
+    "farm": {
+      "person": "farmer harvest portrait golden light",
+      "product": "fresh vegetables basket still life",
+      "scenery": "terraced field mountain morning",
+      "interior": "farm stand produce display"
+    },
+    "retail": {
+      "person": "shop owner portrait store candid",
+      "product": "handmade goods shelf still life",
+      "scenery": "small storefront street morning",
+      "interior": "select shop interior minimal display"
+    }
+  }
+}
