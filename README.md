@@ -2,7 +2,7 @@
 
 愛媛の離島で家業のナマコ屋を継いだ「もりゆか」の公式ランディングページ。
 
-- Next.js 14 (App Router)
+- Next.js 16 (App Router) / React 19
 - TypeScript
 - Tailwind CSS
 - lucide-react
@@ -24,12 +24,23 @@ npm run dev
 - `npm run start` — 本番サーバー起動
 - `npm run lint` — Lint
 
-## Vercel デプロイ手順
+## デプロイ（Cloudflare Workers）
 
-1. GitHub にリポジトリを push
-2. https://vercel.com/new でリポジトリをインポート
-3. Framework Preset は自動で「Next.js」が選ばれるのでそのまま Deploy
-4. 独自ドメインを使う場合は Project Settings → Domains で追加
+`@opennextjs/cloudflare` で Next.js をそのまま Workers 上に載せています。
+
+```bash
+npx wrangler login          # 初回のみ
+npm run preview             # ローカルの workerd で本番同等の動作確認
+npm run deploy              # 本番デプロイ
+```
+
+- 設定は `wrangler.jsonc` / `open-next.config.ts`。`nodejs_compat` フラグが必須です。
+- **環境変数の置き場所が2つに分かれます**
+  - `NEXT_PUBLIC_*`（ConvertKit フォーム ID / Web3Forms キー）は**ビルド時**にコードへ埋め込まれるため、ビルドを実行する環境の `.env.local` か CI の環境変数に必要です。
+  - サーバー側のキー（`UNSPLASH_ACCESS_KEY` / `PEXELS_API_KEY` / `PIXABAY_API_KEY` / `KIT_API_KEY`）は
+    `npx wrangler secret put UNSPLASH_ACCESS_KEY` のように**Secret として登録**します。
+- 独自ドメインは Cloudflare ダッシュボード → Workers & Pages → 該当 Worker → Settings → Domains & Routes で追加。
+  切り替え後は `app/layout.tsx` の `metadataBase` と OG の `url` を新ドメインへ更新してください。
 
 ## コンテンツ差し替え場所
 

@@ -44,3 +44,8 @@ next-env.d.ts
 .codex/config.toml
 .codex/audit-log/
 .codex/.last-audit-sha
+
+# Cloudflare (OpenNext)
+.open-next/
+.wrangler/
+cloudflare-env.d.ts
