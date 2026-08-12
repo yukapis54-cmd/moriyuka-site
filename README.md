@@ -82,3 +82,19 @@ npm run deploy              # 本番デプロイ
 - 取得した写真は `data/photo-cache.json` に永続保存され、以降は API を叩きません。`node scripts/warm-photos.mjs` で一括取得できます（dev サーバー起動が前提。`WARM_BASE` でポート変更可）。
 - Unsplash は Demo キーが 50req/時のため、1回のウォームアップでは大半が Pexels になります。Unsplash 比率を上げたい場合は、キャッシュから該当キーを消して1時間おきに再実行してください。
 - キーが1つも無い場合は Openverse（CC画像）、それも失敗すれば canvas 手描きにフォールバックします。
+
+### 完成イメージの写真を AI 生成に差し替える
+
+ストックフォトの代わりに Gemini で作り置きした画像を使えます。訪問者のリクエスト中は
+API を叩かず、`public/generated/` の PNG を同一オリジンで配信します。
+
+```bash
+# https://aistudio.google.com/apikey で無料キーを発行（カード登録不要・1日500枚）
+GEMINI_API_KEY=xxx node scripts/gen-photos.mjs --limit 5   # まず5枚で出来を見る
+GEMINI_API_KEY=xxx node scripts/gen-photos.mjs             # 残り全部（計156枚）
+npm run dev   # /ideal-hp で確認
+npm run deploy
+```
+
+- `--force` で既存も作り直し。429（日次上限）に当たった時点で打ち切り、そこまでを保存します。
+- 生成物は `data/photo-cache.json` に `source: "gemini"` として記録され、ストックフォトより優先されます。

@@ -390,7 +390,7 @@ type Credit = {
   authorUrl: string;
   license?: string;
   licenseUrl?: string;
-  source?: "unsplash" | "pexels" | "pixabay" | "openverse";
+  source?: "unsplash" | "pexels" | "pixabay" | "openverse" | "gemini";
 };
 type PhotoSet = { images: Partial<Record<PhotoKind, HTMLImageElement[]>>; credits: Credit[] };
 
@@ -486,7 +486,7 @@ async function fetchOneQuery(
         downloadLocation: string;
         license?: string;
         licenseUrl?: string;
-        source?: "unsplash" | "pexels" | "pixabay" | "openverse";
+        source?: "unsplash" | "pexels" | "pixabay" | "openverse" | "gemini";
       }[];
     };
     if (!json.photos?.length) return { images: [], credits: [] };
@@ -3835,7 +3835,9 @@ export default function IdealHpBuilder() {
                 {(() => {
                   const src = credits.find((c) => c.source)?.source ?? "unsplash";
                   const site =
-                    src === "openverse"
+                    src === "gemini"
+                      ? { href: "https://deepmind.google/technologies/gemini/", label: "Gemini（AI生成）" }
+                      : src === "openverse"
                       ? { href: "https://openverse.org", label: "Openverse" }
                       : src === "pexels"
                         ? { href: "https://www.pexels.com", label: "Pexels" }
