@@ -3991,9 +3991,16 @@ function PatternGuide({
             {copied ? "コピーしました" : "指示文をコピー"}
           </button>
         </div>
-        <pre className="mt-4 max-h-72 overflow-auto rounded-xl bg-white p-4 text-xs leading-relaxed text-slate-700 ring-1 ring-slate-200">
-          {prompt}
-        </pre>
+        {/* 長文なので既定は畳む。コピーするだけの人の邪魔をしない */}
+        <details className="mt-4 group">
+          <summary className="cursor-pointer list-none text-xs font-semibold text-ocean-700 hover:underline">
+            <span className="group-open:hidden">中身を見る ▾</span>
+            <span className="hidden group-open:inline">閉じる ▴</span>
+          </summary>
+          <pre className="mt-3 max-h-72 overflow-auto rounded-xl bg-white p-4 text-xs leading-relaxed text-slate-700 ring-1 ring-slate-200">
+            {prompt}
+          </pre>
+        </details>
       </div>
     </section>
   );

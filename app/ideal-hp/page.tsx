@@ -23,7 +23,7 @@ const displayJP = Shippori_Mincho({
 export const metadata: Metadata = {
   title: "あなたの理想のHPは？ | 30秒デザイン診断",
   description:
-    "6つの質問に答えるだけで、あなたの理想のホームページのイメージ画像がその場で完成。画像はダウンロードして制作の相談にそのまま使えます。",
+    "7つの質問に答えるだけで、あなたの理想のホームページのイメージ画像がその場で完成。画像はダウンロードして制作の相談にそのまま使えます。",
 };
 
 export default function IdealHpPage() {
@@ -36,7 +36,7 @@ export default function IdealHpPage() {
             あなたの理想のHPは？
           </h1>
           <p className="mt-4 text-sm leading-relaxed text-slate-600 sm:text-base">
-            選んでいくだけ。6問で、あなたのイメージにいちばん近いホームページの
+            選んでいくだけ。7問で、あなたのイメージにいちばん近いホームページの
             <br className="hidden sm:block" />
             完成イメージ画像がその場でできあがります。
           </p>
@@ -45,7 +45,53 @@ export default function IdealHpPage() {
 
       <IdealHpBuilder />
 
-      <div className="mx-auto w-full max-w-3xl px-5 pb-16 text-center">
+      {/* 診断で終わらせない。ここまで分かった人が次に困るのは「で、誰が作るのか」 */}
+      <section className="border-t border-slate-100 bg-gradient-to-b from-white to-ocean-50">
+        <div className="mx-auto w-full max-w-3xl px-5 py-16">
+          <h2 className="text-xl font-bold text-slate-900 sm:text-2xl">
+            イメージは決まりました。あとは「誰が作るか」だけです。
+          </h2>
+          <p className="mt-4 text-sm leading-relaxed text-slate-600">
+            ここまでで、作りたい形と、その部品の名前と、AIへの頼み方が手に入りました。
+            ただ実際に公開するには、この先がまだ残っています。
+          </p>
+          <ul className="mt-5 space-y-2 text-sm leading-relaxed text-slate-600">
+            {[
+              "自分の商品の写真を撮る（ストック写真のままでは売れません）",
+              "自分の言葉で文章を書く（AIが書いた文章は、読めばわかります）",
+              "ドメインとサーバーを用意して、公開して、動き続ける状態にする",
+              "問い合わせや注文が届く導線をつなぐ",
+            ].map((t) => (
+              <li key={t} className="flex gap-2">
+                <span className="mt-[3px] text-ocean-500">—</span>
+                <span>{t}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-5 text-sm leading-relaxed text-slate-600">
+            自分でやるなら、この診断結果とAIへの指示文がそのまま設計図になります。
+            人に頼むなら、ダウンロードした画像を見せるだけで話が早く済みます。
+            どちらでも、迷ったら聞いてください。
+          </p>
+
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link
+              href="/#contact"
+              className="rounded-xl bg-ocean-600 px-6 py-3 text-sm font-semibold text-white hover:bg-ocean-700"
+            >
+              この画像を見せて相談する
+            </Link>
+            <Link
+              href="/#newsletter"
+              className="rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            >
+              作り方をメールで受け取る
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <div className="mx-auto w-full max-w-3xl px-5 py-10 text-center">
         <Link href="/" className="text-sm text-slate-500 underline hover:text-slate-800">
           ← トップページに戻る
         </Link>
