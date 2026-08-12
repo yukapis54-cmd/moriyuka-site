@@ -117,3 +117,17 @@ node scripts/x-scan.mjs https://x.com/xxx/status/123  # 個別ポスト
   自動操作ブラウザからのログインも弾くため、検知対策を入れてあります。
 - **負荷をかけないでください。** スクロールは既定8回まで。頻繁に回すとアカウントが凍結されえます。
 - 観測対象は `scripts/x-scan.mjs` の `WATCHING` に追記します。
+
+## LP を作る（GPT Image 2 → 素材切り出し → Claude Design）
+
+手順とプロンプトは [guides/LP作成-GPTとClaudeの分担.md](guides/LP作成-GPTとClaudeの分担.md) にまとめています。
+
+ChatGPT に出させた素材シート（グリッドに素材を並べた1枚絵）を、1マスずつの透過PNGに切り分けます。
+
+```bash
+node scripts/split-sheet.mjs ~/Downloads/素材シート.png --cols 4 --rows 4
+# → .lp-assets/素材シート/01.png … （白背景は自動で透過）
+```
+
+四隅から白の領域を辿って外側だけ抜くので、図形の内側の白は残ります。
+ずれる場合は `--trim 8`、透過されない場合は `--tolerance 40` を試してください。

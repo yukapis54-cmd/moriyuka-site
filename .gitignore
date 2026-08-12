@@ -55,3 +55,6 @@ cloudflare-env.d.ts
 
 # 参考LPのスクショ（scripts/lp-shots.mjs）
 .lp-shots/
+
+# LP素材の切り出し結果（scripts/split-sheet.mjs）
+.lp-assets/
