@@ -85,6 +85,11 @@ export default function IdealHpPage() {
             ))}
           </ul>
           <p className="mt-5 text-sm leading-relaxed text-slate-600">
+            いまはAIで、それらしい画面がいくらでも作れます。ただ実際にやってみると分かりますが、
+            大変なのは作ることではなく、<strong className="font-semibold text-slate-800">お客さんに出せる状態まで持っていくこと</strong>
+            です。文字の揃え、写真の差し替え、スマホでの見え方、表示の速さ。ここに時間がかかります。
+          </p>
+          <p className="mt-4 text-sm leading-relaxed text-slate-600">
             自分でやるなら、この診断結果とAIへの指示文がそのまま設計図になります。
             人に頼むなら、ダウンロードした画像を見せるだけで話が早く済みます。
             どちらでも、迷ったら聞いてください。

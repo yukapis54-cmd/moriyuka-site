@@ -3947,6 +3947,10 @@ function PatternGuide({
       <h3 className="text-xl font-bold text-slate-900 sm:text-2xl">「なんか良い」の正体</h3>
       <p className="mt-2 text-sm leading-relaxed text-slate-500">
         上のイメージが良く見えるとしたら、それはセンスではなく理由があります。種明かしします。
+        <br />
+        ただ、デザインのゴールは「おしゃれ」ではありません。
+        <strong className="font-semibold text-slate-700">伝えたいことが伝わって、人が動くこと</strong>
+        です。お店なら「行きたい」、商品なら「欲しい」。そこに効く順に並べています。
       </p>
       <ol className="mt-6 space-y-4">
         {reasons.map((r, i) => (

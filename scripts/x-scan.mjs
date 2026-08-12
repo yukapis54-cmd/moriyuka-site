@@ -27,6 +27,7 @@ const SCROLLS = Number(process.env.X_SCROLLS) || 8;
 const WATCHING = [
   { handle: "thingnld", why: "デザインの「なんか良い」を言語化している" },
   { handle: "goodfreefonts", why: "日本語フリーフォントの紹介" },
+  { handle: "terasu_design", why: "実在サイトの良デザイン紹介と、制作者視点の話" },
 ];
 
 const args = process.argv.slice(2);
