@@ -1,11 +1,12 @@
 {
   "_note": "理想HP診断（/ideal-hp）の写真検索語。components/IdealHpBuilder.tsx と scripts/warm-photos.mjs が共有する。色名は入れない（色は配色側で作る）。雑誌っぽい写真が出るよう natural light / editorial / minimal などの語を添えている。",
   "_note2": "味つけは4種類に絞ってある。検索語が増えるほど写真APIのレート制限に当たり、質の落ちる供給元まで落ちてしまうため。",
+  "_note3": "味つけは『雑誌の1ページとして成立するか』を基準に選んでいる。stock 写真らしい説明的な絵ではなく、余白・光・質感で見せている絵を引き当てるための語。",
   "styles": {
-    "soft": "natural light soft",
-    "editorial": "minimal editorial",
-    "vivid": "bright vivid",
-    "moody": "moody cinematic"
+    "soft": "soft natural light editorial still life",
+    "editorial": "minimal editorial art direction",
+    "vivid": "bold color studio lighting editorial",
+    "moody": "moody cinematic low key editorial"
   },
   "styleByTone": {
     "natural": "soft",

@@ -468,6 +468,49 @@ function loadImage(src: string, timeoutMs = 8000): Promise<HTMLImageElement | nu
 }
 
 
+/**
+ * 写真を「紙面で効くか」で採点する。0〜1、高いほど良い。
+ * 明るさが中庸で、明暗の幅（コントラスト）があるものを上位にする。
+ * ミニマル系の検索では真っ白な静物が混ざりやすく、白いカードに載せると消えるため。
+ */
+const SCORE_CACHE = new WeakMap<HTMLImageElement, number>();
+
+function contrastScore(img: HTMLImageElement): number {
+  const cached = SCORE_CACHE.get(img);
+  if (cached !== undefined) return cached;
+  let score = 0.5; // 測れなければ順位を変えない
+  try {
+    const n = 24;
+    const c = document.createElement("canvas");
+    c.width = n;
+    c.height = n;
+    const ctx = c.getContext("2d", { willReadFrequently: true });
+    if (ctx) {
+      ctx.drawImage(img, 0, 0, n, n);
+      const d = ctx.getImageData(0, 0, n, n).data;
+      let sum = 0;
+      let sumSq = 0;
+      const count = n * n;
+      for (let i = 0; i < d.length; i += 4) {
+        const y = 0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2];
+        sum += y;
+        sumSq += y * y;
+      }
+      const mean = sum / count;
+      const sd = Math.sqrt(Math.max(0, sumSq / count - mean * mean));
+      // 明るさ: 128 から離れるほど減点（白飛び・黒つぶれ対策）
+      const brightness = 1 - Math.min(1, Math.abs(mean - 128) / 128);
+      // コントラスト: 標準偏差 64 くらいで頭打ちにする
+      const contrast = Math.min(1, sd / 64);
+      score = brightness * 0.45 + contrast * 0.55;
+    }
+  } catch {
+    /* CORS で測れない場合は中立点のまま */
+  }
+  SCORE_CACHE.set(img, score);
+  return score;
+}
+
 /** 1つの検索語で写真を取得して読み込む */
 async function fetchOneQuery(
   query: string,
@@ -498,6 +541,9 @@ async function fetchOneQuery(
       .map((img, i) => ({ img, meta: json.photos[i] }))
       .filter((l): l is { img: HTMLImageElement; meta: (typeof json.photos)[0] } => !!l.img);
     if (!ok.length) return { images: [], credits: [] };
+    // 真っ白／真っ黒に寄った写真は、白いカードや暗い帯に載せると消えてしまう。
+    // 実際に読み込んだ画素を測って、紙面で効く写真から先に使う。
+    ok.sort((a, b) => contrastScore(b.img) - contrastScore(a.img));
 
     const credits: Credit[] = [];
     ok.forEach((l) => {
