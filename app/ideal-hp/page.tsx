@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Noto_Serif_JP, Shippori_Mincho } from "next/font/google";
+import { Kaisei_Decol, Noto_Serif_JP, Shippori_Mincho, Yuji_Syuku } from "next/font/google";
 import IdealHpBuilder from "@/components/IdealHpBuilder";
 
 // 完成イメージの見出しに使う明朝。これがあるだけで「素人のワイヤー」感が消える。
@@ -19,6 +19,22 @@ const displayJP = Shippori_Mincho({
   display: "swap",
   preload: false,
 });
+// 空気感ごとの見出し書体。書体が変わるだけで印象が変わることを、診断の中で体験してもらう。
+// next/font は使う文字だけを切り出して配信するので、日本語でも重くならない。
+const waJP = Yuji_Syuku({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-wa-jp",
+  display: "swap",
+  preload: false,
+});
+const sweetJP = Kaisei_Decol({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-sweet-jp",
+  display: "swap",
+  preload: false,
+});
 
 export const metadata: Metadata = {
   title: "あなたの理想のHPは？ | 30秒デザイン診断",
@@ -28,7 +44,7 @@ export const metadata: Metadata = {
 
 export default function IdealHpPage() {
   return (
-    <main className={`min-h-screen bg-white ${serifJP.variable} ${displayJP.variable}`}>
+    <main className={`min-h-screen bg-white ${serifJP.variable} ${displayJP.variable} ${waJP.variable} ${sweetJP.variable}`}>
       <section className="border-b border-slate-100 bg-gradient-to-b from-ocean-50 to-white">
         <div className="mx-auto w-full max-w-3xl px-5 py-14 text-center">
           <p className="text-xs font-semibold tracking-widest text-ocean-600">DESIGN DIAGNOSIS</p>

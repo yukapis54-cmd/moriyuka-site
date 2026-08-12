@@ -413,6 +413,17 @@ const PHOTO_CACHE = new Map<string, Promise<PhotoSet | null>>();
 /** 検索語ごとの結果キャッシュ。レート制限の消費を抑える。 */
 const QUERY_CACHE = new Map<string, Promise<{ images: HTMLImageElement[]; credits: Credit[] }>>();
 
+/**
+ * 空気感ごとの見出し書体。書体が変わるだけで印象がどれだけ動くかを、診断で体験してもらう。
+ * canvas は CSS 変数を解釈しないので、この指定をプローブ要素に当てて実測値を取り出す。
+ */
+function displayStackFor(tone: string): string {
+  const base = "var(--font-display-jp), var(--font-serif-jp), serif";
+  if (tone === "wamodern") return `var(--font-wa-jp), ${base}`; // 筆書きに近い明朝
+  if (tone === "patisserie") return `var(--font-sweet-jp), ${base}`; // 丸みのある明朝
+  return base;
+}
+
 /** モノトーン配色のときだけ写真の彩度を落とす */
 let DESATURATE = false;
 function a_desaturate(_kind: string): boolean {
@@ -3706,7 +3717,7 @@ export default function IdealHpBuilder() {
         ref={serifRef}
         aria-hidden
         className="pointer-events-none absolute -left-[9999px] top-0"
-        style={{ fontFamily: "var(--font-display-jp), var(--font-serif-jp), serif" }}
+        style={{ fontFamily: displayStackFor(merged.tone) }}
       >
         明朝
       </span>
