@@ -98,3 +98,22 @@ npm run deploy
 
 - `--force` で既存も作り直し。429（日次上限）に当たった時点で打ち切り、そこまでを保存します。
 - 生成物は `data/photo-cache.json` に `source: "gemini"` として記録され、ストックフォトより優先されます。
+
+## デザインの参考にしている発信者を定点観測する（X）
+
+`scripts/x-scan.mjs` で X の投稿本文・画像・スクリーンショットをまとめて取得します。
+取得物は `.x-scan/<アカウント名>/`（gitignore 済み）。
+
+```bash
+npx playwright install chromium   # 初回のみ
+node scripts/x-scan.mjs                 # WATCHING に登録した全アカウント
+node scripts/x-scan.mjs goodfreefonts   # 1アカウントだけ
+node scripts/x-scan.mjs https://x.com/xxx/status/123  # 個別ポスト
+```
+
+- ログイン情報は `~/.claude-x-profile`（この用途専用のプロファイル）に保存されます。
+  普段使いの Chrome の Cookie には触れません。初回だけ開いた窓で手動ログインが必要です。
+- X はログインなしの閲覧を遮断しており（API は `402 Payment Required`）、
+  自動操作ブラウザからのログインも弾くため、検知対策を入れてあります。
+- **負荷をかけないでください。** スクロールは既定8回まで。頻繁に回すとアカウントが凍結されえます。
+- 観測対象は `scripts/x-scan.mjs` の `WATCHING` に追記します。

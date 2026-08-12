@@ -49,3 +49,6 @@ next-env.d.ts
 .open-next/
 .wrangler/
 cloudflare-env.d.ts
+
+# X の定点観測の取得物（scripts/x-scan.mjs）
+.x-scan/
