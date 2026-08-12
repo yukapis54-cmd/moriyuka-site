@@ -75,7 +75,9 @@ const QUESTIONS: Question[] = [
       { id: "plum", label: "葡萄・パープル", desc: "上品・個性・クリエイティブ", swatch: ["#5b3a67", "#a982b8", "#f3edf6"] },
       { id: "charcoal", label: "墨＋朱", desc: "凛とした・和・力強さ", swatch: ["#1c1c1c", "#c8402f", "#f2efe9"] },
       { id: "mint", label: "ミント・淡青緑", desc: "清潔・軽やか・医療/美容", swatch: ["#12796e", "#7fd0c4", "#e9f6f4"] },
-      { id: "midnight", label: "黒×金", desc: "背景ごと黒に反転。老舗・高級・写真が主役", swatch: ["#0d0d10", "#c9a227", "#f4f1ea"] },
+      { id: "midnight", label: "黒×金", desc: "背景ごと黒に反転。老舗・高級", swatch: ["#0d0d10", "#c9a227", "#f4f1ea"] },
+      { id: "noir", label: "黒×白", desc: "色を捨てる。写真だけが色を持つ", swatch: ["#0a0a0a", "#f5f5f5", "#8f8f8f"] },
+      { id: "deepnavy", label: "濃紺×金", desc: "夜の海。信頼と格式を同時に", swatch: ["#0b1424", "#c2a05a", "#eef2f8"] },
     ],
   },
   {
@@ -239,6 +241,30 @@ const PALETTES: Record<string, Palette> = {
     text: "#f4f1ea",
     sub: "#9b968c",
     dark: "#000000",
+  },
+  noir: {
+    name: "Noir",
+    bg: "#0a0a0a",
+    soft: "#151515",
+    line: "#2a2a2a",
+    primary: "#f5f5f5",
+    primaryDeep: "#ffffff",
+    accent: "#8f8f8f",
+    text: "#f2f2f2",
+    sub: "#8e8e8e",
+    dark: "#000000",
+  },
+  deepnavy: {
+    name: "Deep Navy Gold",
+    bg: "#0b1424",
+    soft: "#132038",
+    line: "#22314c",
+    primary: "#c2a05a",
+    primaryDeep: "#dcbd77",
+    accent: "#5b86c4",
+    text: "#eef2f8",
+    sub: "#93a1b8",
+    dark: "#060d18",
   },
   charcoal: {
     name: "Sumi & Vermilion",
@@ -2420,6 +2446,39 @@ function drawCinema(ctx: CanvasRenderingContext2D, a: Full, siteName: string, fo
 
 /* ------------------------------ プロ仕様レンダラー ----------------------------- */
 
+/**
+ * ページの骨格そのものを、選んだ内容で組み替える。
+ *
+ * 以前はセクションの種類も順番も固定で、選んでも最初の1画面しか変わらなかった。
+ * 実在の LP は縦 4,000px のものから 13,000px のものまであるので、そのくらい振る。
+ * - layout: どの順で見せるか（カード主体／記事風／写真主体）
+ * - density: いくつ見せるか（少なめ4つ 〜 しっかり10個）
+ */
+function sectionPlanFor(a: Full): string[] {
+  // 「読み物」を厚くする並び。物語→本文→一覧、の順で読ませる
+  const magazine = ["signature", "about", "purpose", "list", "voice"];
+  // カードを主役にする並び。商品や事例を先に浴びせる
+  const card = ["purpose", "list", "signature", "about", "goalSection", "voice"];
+  // 写真を主役にする並び。大きい絵で殴ってから、説明は後ろに回す
+  const photo = ["signature", "purpose", "list", "about", "goalSection", "voice"];
+  // 標準（左右分割）。従来の並び
+  const split = ["purpose", "signature", "about", "goalSection", "list", "voice"];
+
+  const base =
+    a.layout === "magazine" ? magazine : a.layout === "card" ? card : a.layout === "fullhero" ? photo : split;
+
+  if (a.density === "light") {
+    // 見て伝わる短いページ。説明の節を落として4つに絞る
+    return base.filter((s) => s !== "signature" && s !== "voice" && s !== "goalSection").slice(0, 4);
+  }
+  if (a.density === "heavy") {
+    // しっかり読ませる。実在の長いLPは同じ型を何度も出しているので、こちらも重ねる
+    const extra = a.layout === "card" ? ["about", "list", "signature"] : ["list", "signature", "purpose"];
+    return [...base, ...extra, "goalSection"];
+  }
+  return base;
+}
+
 /** "never enough" → "Never Enough"。全部大文字より、頭だけ大文字のほうが柔らかく今っぽい */
 function titleCase(text: string): string {
   return text
@@ -2888,279 +2947,296 @@ function drawSite(ctx: CanvasRenderingContext2D, a: Full, siteName: string, font
     y = ty + 504 + 80 * air;
   }
 
-  /* ---- 目的ブロック：ヒーローの直下に置き、目的の違いが一目で分かるようにする ---- */
-  if (a.goal === "shop") {
-    // 売る：商品カードを最上部に並べる
-    const gcw = (inner - 48) / 3;
-    k.items.forEach((it, i) => {
-      const gx = pad + i * (gcw + 24);
-      artwork(ctx, gx, y, gcw, gcw * 0.72, t.card, p, "product", seed + i * 811, font, initial);
+  /* ---- ここから下のセクションは、選んだレイアウトと文章量で並びと数が変わる ---- */
+  const SECTIONS: Record<string, () => void> = {
+    purpose: () => {
+    /* ---- 目的ブロック：ヒーローの直下に置き、目的の違いが一目で分かるようにする ---- */
+    if (a.goal === "shop") {
+      // 売る：商品カードを最上部に並べる
+      const gcw = (inner - 48) / 3;
+      k.items.forEach((it, i) => {
+        const gx = pad + i * (gcw + 24);
+        artwork(ctx, gx, y, gcw, gcw * 0.72, t.card, p, "product", seed + i * 811, font, initial);
+        ctx.save();
+        ctx.fillStyle = p.text;
+        ctx.font = `600 15px ${font}`;
+        ctx.fillText(it.name, gx, y + gcw * 0.72 + 30);
+        ctx.textAlign = "right";
+        ctx.fillText(it.price, gx + gcw, y + gcw * 0.72 + 30);
+        ctx.restore();
+        hairline(ctx, gx, y + gcw * 0.72 + 46, gcw, rule);
+      });
+      y += gcw * 0.72 + 80 * air;
+    } else if (a.goal === "lead") {
+      // 相談：問い合わせ導線を最上部に
+      box(ctx, pad, y, inner, 150, t.card, p.soft);
+      display(k.bandTitle, pad + 40, y + 62, 24, p.text);
+      para(ctx, k.ctaNote, pad + 40, y + 92, inner * 0.5, 13, 22, p.sub, font, 400, "left", 1);
+      solidBtn(W - pad - 260, y + 46, k.cta, p.primary, "#ffffff", 220, 56);
+      y += 150 + 80 * air;
+    } else if (a.goal === "brand") {
+      // 世界観：大きな一文だけを置く
       ctx.save();
-      ctx.fillStyle = p.text;
-      ctx.font = `600 15px ${font}`;
-      ctx.fillText(it.name, gx, y + gcw * 0.72 + 30);
-      ctx.textAlign = "right";
-      ctx.fillText(it.price, gx + gcw, y + gcw * 0.72 + 30);
-      ctx.restore();
-      hairline(ctx, gx, y + gcw * 0.72 + 46, gcw, rule);
-    });
-    y += gcw * 0.72 + 80 * air;
-  } else if (a.goal === "lead") {
-    // 相談：問い合わせ導線を最上部に
-    box(ctx, pad, y, inner, 150, t.card, p.soft);
-    display(k.bandTitle, pad + 40, y + 62, 24, p.text);
-    para(ctx, k.ctaNote, pad + 40, y + 92, inner * 0.5, 13, 22, p.sub, font, 400, "left", 1);
-    solidBtn(W - pad - 260, y + 46, k.cta, p.primary, "#ffffff", 220, 56);
-    y += 150 + 80 * air;
-  } else if (a.goal === "brand") {
-    // 世界観：大きな一文だけを置く
-    ctx.save();
-    ctx.textAlign = "center";
-    display(k.aboutTitle, W / 2, y + 60, 34, p.text, "center");
-    ctx.restore();
-    para(ctx, k.lead, W / 2, y + 104, inner * 0.6, 14, 26, p.sub, font, 400, "center", 2);
-    y += 150 + 70 * air;
-  } else {
-    // ファン：SNSとLINEを最上部に
-    const names = ["IG", "TT", "YT", "X", "note"];
-    names.forEach((n, i) => {
-      const cx = pad + 30 + i * 78;
-      box(ctx, cx - 26, y + 14, 52, 52, t.radius ? 26 : 4, i % 2 ? p.accent : p.primary);
-      ctx.save();
-      ctx.fillStyle = "#ffffff";
-      ctx.font = `700 13px ${font}`;
       ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(n, cx, y + 40);
+      display(k.aboutTitle, W / 2, y + 60, 34, p.text, "center");
       ctx.restore();
-    });
-    box(ctx, W - pad - 280, y + 14, 280, 52, t.radius ? 26 : 4, "#06c755");
-    ctx.save();
-    ctx.fillStyle = "#ffffff";
-    ctx.font = `700 15px ${font}`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("LINE友だち追加", W - pad - 140, y + 40);
-    ctx.restore();
-    ctx.textBaseline = "alphabetic";
-    ctx.textAlign = "left";
-    y += 80 + 80 * air;
-  }
-
-  /* ---- シグネチャ：一点だけ過剰にする ---- */
-  // 「少なめ」を選んだ人には出さない。セクションを削ることでページの丈そのものを変える
-  const sig = a.density === "light" ? "none" : signatureFor(a, seed);
-  if (sig === "oversizedType") {
-    // 画面幅いっぱいの極大タイポ。読ませる前に「殴る」。
-    const word = k.h1[1].replace(/[。、]/g, "");
-    ctx.save();
-    let size = 300;
-    ctx.font = `${headWeight} ${size}px ${headFont}`;
-    while (ctx.measureText(word).width > W - 40 && size > 40) {
-      size -= 4;
-      ctx.font = `${headWeight} ${size}px ${headFont}`;
-    }
-    ctx.fillStyle = rgba(p.primary, a.tone === "pop" ? 1 : 0.14);
-    ctx.textAlign = "center";
-    ctx.fillText(word, W / 2, y + size * 0.82);
-    ctx.restore();
-    y += size * 0.95 + 70 * air;
-  } else if (sig === "verticalBand") {
-    // 縦書きの一行を、余白の中に一本だけ通す
-    const h2 = 420;
-    artwork(ctx, pad, y, inner * 0.58, h2, t.card, p, secKinds[0], seed + 21, font, initial);
-    vtext(ctx, k.aboutTitle.replace(/[。]/g, ""), W - pad - 40, y + 20, 30, p.text, serif, 500, 40);
-    vtext(ctx, k.lead.replace(/[。]/g, ""), W - pad - 110, y + 40, 14, p.sub, serif, 400, 20);
-    y += h2 + 90 * air;
-  } else if (sig === "fullBleedWord") {
-    // 全面写真に、白抜きの一語だけ
-    const h2 = 380;
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(0, y, W, h2);
-    ctx.clip();
-    artwork(ctx, 0, y - 40, W, h2 + 80, 0, p, "scenery", seed + 33, font, initial);
-    ctx.fillStyle = "rgba(0,0,0,0.35)";
-    ctx.fillRect(0, y, W, h2);
-    ctx.restore();
-    ctx.save();
-    ctx.fillStyle = "#ffffff";
-    ctx.textAlign = "center";
-    ctx.letterSpacing = "14px";
-    ctx.font = `${headWeight} 56px ${headFont}`;
-    // 途中で切れた文字列を置くと事故に見えるので、読点までの一句をそのまま使う
-    const clause = k.aboutTitle.split(/[、。]/).filter(Boolean)[0] ?? k.h1[1];
-    const word = clause.length > 12 ? (k.h1[1].replace(/[。、]/g, "") || clause.slice(0, 8)) : clause;
-    ctx.fillText(word, W / 2, y + h2 / 2 + 18);
-    ctx.restore();
-    y += h2 + 90 * air;
-  } else if (sig === "giantNumber") {
-    // 数字を並べるのではなく、1つだけ巨大に置く
-    const [num, label] = k.stats[0];
-    ctx.save();
-    ctx.fillStyle = p.text;
-    ctx.font = `300 200px ${headFont}`;
-    ctx.fillText(num, pad, y + 170);
-    const nw = ctx.measureText(num).width;
-    ctx.restore();
-    ctx.save();
-    ctx.fillStyle = p.sub;
-    ctx.font = `500 13px ${font}`;
-    ctx.letterSpacing = "3px";
-    ctx.fillText(label, pad + nw + 28, y + 80);
-    ctx.restore();
-    para(ctx, k.aboutBody, pad + nw + 28, y + 112, inner - nw - 28, 15, 30, p.sub, font, 400, "left", 3);
-    y += 210 + 90 * air;
-  } else if (sig === "collage") {
-    // 色面と複数写真を組み合わせた“編集された絵”
-    collageBlock(ctx, pad, y, inner, 460, p, a, seed, font, initial, t.card);
-    y += 460 + 90 * air;
-  } else {
-    // 端に寄せた索引。中央揃えの安全な構図を捨てる。
-    hairline(ctx, pad, y, inner, rule);
-    const rows = k.items;
-    rows.forEach((it, i) => {
-      const ry = y + 40 + i * 76;
-      ctx.save();
-      ctx.fillStyle = p.sub;
-      ctx.font = `500 11px ${font}`;
-      ctx.letterSpacing = "2px";
-      ctx.fillText(String(i + 1).padStart(2, "0"), pad, ry + 26);
-      ctx.restore();
-      display(it.name, pad + 70, ry + 32, 26, p.text);
-      ctx.save();
-      ctx.textAlign = "right";
-      ctx.fillStyle = p.sub;
-      ctx.font = `400 13px ${font}`;
-      ctx.fillText(it.price, W - pad, ry + 32);
-      ctx.restore();
-      hairline(ctx, pad, ry + 56, inner, rule);
-    });
-    y += 40 + rows.length * 76 + 80 * air;
-  }
-
-  /* ---- ABOUT（非対称レイアウト） ---- */
-  const aw = inner * 0.46;
-  const tw = inner - aw - 76;
-  artwork(ctx, pad, y, aw, 420, t.card, p, a.hero === "product" ? "scenery" : "person", seed + 41, font, initial);
-  const tx = pad + aw + 76;
-  eyebrow("ABOUT", tx, y + 34);
-  display(k.aboutTitle, tx, y + 96, 32, p.text);
-  let ay = y + 136;
-  ay += para(ctx, k.aboutBody, tx, ay, tw, bodySize, bodyLh, p.sub, font, 400, "left", bodyLines) + 34;
-  arrowLink(ctx, "わたしたちについて", tx, ay, p.primary, font);
-  y += Math.max(420, ay - y + 40) + 96 * air;
-
-  /* ---- 目的別セクション ---- */
-  if (a.goal === "lead") {
-    box(ctx, pad, y, inner, 372, t.card, p.soft);
-    eyebrow("CONTACT", W / 2, y + 56, "center");
-    display("お問い合わせ", W / 2, y + 106, 28, p.text, "center");
-    para(ctx, "内容を確認のうえ、1営業日以内にご返信いたします。", W / 2, y + 138, 560, 13, 22, p.sub, font, 400, "center", 1);
-    const fw = 560;
-    const fx = W / 2 - fw / 2;
-    ["お名前", "メールアドレス", "ご相談内容"].forEach((lb, i) => {
-      const fy = y + 166 + i * 52;
-      box(ctx, fx, fy, fw, 42, t.radius ? 21 : 2, "#ffffff");
-      ctx.save();
-      ctx.fillStyle = rgba(p.sub, 0.8);
-      ctx.font = `400 13px ${font}`;
-      ctx.textBaseline = "middle";
-      ctx.fillText(lb, fx + 18, fy + 21);
-      ctx.restore();
-    });
-    solidBtn(W / 2 - 110, y + 322 - 2, "送信する", p.primary, "#ffffff", 220, 46);
-    y += 372 + 96 * air;
-  } else if (a.goal === "fan") {
-    eyebrow("FOLLOW", W / 2, y, "center");
-    display("SNSでも発信しています", W / 2, y + 50, 28, p.text, "center");
-    const names = ["Instagram", "TikTok", "YouTube", "X", "note"];
-    names.forEach((n, i) => {
-      const cx = W / 2 - (names.length - 1) * 60 + i * 120;
-      box(ctx, cx - 34, y + 88, 68, 68, t.radius ? 34 : 4, i % 2 ? p.accent : p.primary);
+      para(ctx, k.lead, W / 2, y + 104, inner * 0.6, 14, 26, p.sub, font, 400, "center", 2);
+      y += 150 + 70 * air;
+    } else {
+      // ファン：SNSとLINEを最上部に
+      const names = ["IG", "TT", "YT", "X", "note"];
+      names.forEach((n, i) => {
+        const cx = pad + 30 + i * 78;
+        box(ctx, cx - 26, y + 14, 52, 52, t.radius ? 26 : 4, i % 2 ? p.accent : p.primary);
+        ctx.save();
+        ctx.fillStyle = "#ffffff";
+        ctx.font = `700 13px ${font}`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(n, cx, y + 40);
+        ctx.restore();
+      });
+      box(ctx, W - pad - 280, y + 14, 280, 52, t.radius ? 26 : 4, "#06c755");
       ctx.save();
       ctx.fillStyle = "#ffffff";
       ctx.font = `700 15px ${font}`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(n.slice(0, 2), cx, y + 123);
-      ctx.fillStyle = p.sub;
-      ctx.font = `400 11px ${font}`;
+      ctx.fillText("LINE友だち追加", W - pad - 140, y + 40);
+      ctx.restore();
       ctx.textBaseline = "alphabetic";
-      ctx.fillText(n, cx, y + 178);
-      ctx.restore();
-    });
-    box(ctx, W / 2 - 160, y + 208, 320, 58, t.radius ? 29 : 2, "#06c755", 20);
-    ctx.save();
-    ctx.fillStyle = "#ffffff";
-    ctx.font = `700 17px ${font}`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("LINE友だち追加", W / 2, y + 237);
-    ctx.restore();
-    y += 300 + 96 * air;
-  }
+      ctx.textAlign = "left";
+      y += 80 + 80 * air;
+    }
 
-  /* ---- 一覧セクション ---- */
-  if (a.layout !== "card") {
-    const used = sectionHead(k.secLabel, k.secTitle, y, k.secLead);
-    ctx.save();
-    ctx.textAlign = "right";
-    ctx.fillStyle = p.primary;
-    ctx.font = `600 13px ${font}`;
-    ctx.fillText("すべて見る →", W - pad, y + 84);
-    ctx.restore();
-    y += used + 44;
-    const shown = itemCount <= k.items.length ? k.items.slice(0, itemCount) : [...k.items, k.items[0]].slice(0, itemCount);
-    const cw = (inner - 28 * (shown.length - 1)) / shown.length;
-    shown.forEach((it, i) => {
-      const cx = pad + i * (cw + 28);
-      artwork(ctx, cx, y, cw, cw * 1.15, t.card, p, secKinds[i % 3], seed + i * 613, font, initial);
+    },
+    signature: () => {
+    /* ---- シグネチャ：一点だけ過剰にする ---- */
+    // 「少なめ」を選んだ人には出さない。セクションを削ることでページの丈そのものを変える
+    const sig = a.density === "light" ? "none" : signatureFor(a, seed);
+    if (sig === "oversizedType") {
+      // 画面幅いっぱいの極大タイポ。読ませる前に「殴る」。
+      const word = k.h1[1].replace(/[。、]/g, "");
+      ctx.save();
+      let size = 300;
+      ctx.font = `${headWeight} ${size}px ${headFont}`;
+      while (ctx.measureText(word).width > W - 40 && size > 40) {
+        size -= 4;
+        ctx.font = `${headWeight} ${size}px ${headFont}`;
+      }
+      ctx.fillStyle = rgba(p.primary, a.tone === "pop" ? 1 : 0.14);
+      ctx.textAlign = "center";
+      ctx.fillText(word, W / 2, y + size * 0.82);
+      ctx.restore();
+      y += size * 0.95 + 70 * air;
+    } else if (sig === "verticalBand") {
+      // 縦書きの一行を、余白の中に一本だけ通す
+      const h2 = 420;
+      artwork(ctx, pad, y, inner * 0.58, h2, t.card, p, secKinds[0], seed + 21, font, initial);
+      vtext(ctx, k.aboutTitle.replace(/[。]/g, ""), W - pad - 40, y + 20, 30, p.text, serif, 500, 40);
+      vtext(ctx, k.lead.replace(/[。]/g, ""), W - pad - 110, y + 40, 14, p.sub, serif, 400, 20);
+      y += h2 + 90 * air;
+    } else if (sig === "fullBleedWord") {
+      // 全面写真に、白抜きの一語だけ
+      const h2 = 380;
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(0, y, W, h2);
+      ctx.clip();
+      artwork(ctx, 0, y - 40, W, h2 + 80, 0, p, "scenery", seed + 33, font, initial);
+      ctx.fillStyle = "rgba(0,0,0,0.35)";
+      ctx.fillRect(0, y, W, h2);
+      ctx.restore();
+      ctx.save();
+      ctx.fillStyle = "#ffffff";
+      ctx.textAlign = "center";
+      ctx.letterSpacing = "14px";
+      ctx.font = `${headWeight} 56px ${headFont}`;
+      // 途中で切れた文字列を置くと事故に見えるので、読点までの一句をそのまま使う
+      const clause = k.aboutTitle.split(/[、。]/).filter(Boolean)[0] ?? k.h1[1];
+      const word = clause.length > 12 ? (k.h1[1].replace(/[。、]/g, "") || clause.slice(0, 8)) : clause;
+      ctx.fillText(word, W / 2, y + h2 / 2 + 18);
+      ctx.restore();
+      y += h2 + 90 * air;
+    } else if (sig === "giantNumber") {
+      // 数字を並べるのではなく、1つだけ巨大に置く
+      const [num, label] = k.stats[0];
       ctx.save();
       ctx.fillStyle = p.text;
+      ctx.font = `300 200px ${headFont}`;
+      ctx.fillText(num, pad, y + 170);
+      const nw = ctx.measureText(num).width;
+      ctx.restore();
+      ctx.save();
+      ctx.fillStyle = p.sub;
+      ctx.font = `500 13px ${font}`;
+      ctx.letterSpacing = "3px";
+      ctx.fillText(label, pad + nw + 28, y + 80);
+      ctx.restore();
+      para(ctx, k.aboutBody, pad + nw + 28, y + 112, inner - nw - 28, 15, 30, p.sub, font, 400, "left", 3);
+      y += 210 + 90 * air;
+    } else if (sig === "collage") {
+      // 色面と複数写真を組み合わせた“編集された絵”
+      collageBlock(ctx, pad, y, inner, 460, p, a, seed, font, initial, t.card);
+      y += 460 + 90 * air;
+    } else {
+      // 端に寄せた索引。中央揃えの安全な構図を捨てる。
+      hairline(ctx, pad, y, inner, rule);
+      const rows = k.items;
+      rows.forEach((it, i) => {
+        const ry = y + 40 + i * 76;
+        ctx.save();
+        ctx.fillStyle = p.sub;
+        ctx.font = `500 11px ${font}`;
+        ctx.letterSpacing = "2px";
+        ctx.fillText(String(i + 1).padStart(2, "0"), pad, ry + 26);
+        ctx.restore();
+        display(it.name, pad + 70, ry + 32, 26, p.text);
+        ctx.save();
+        ctx.textAlign = "right";
+        ctx.fillStyle = p.sub;
+        ctx.font = `400 13px ${font}`;
+        ctx.fillText(it.price, W - pad, ry + 32);
+        ctx.restore();
+        hairline(ctx, pad, ry + 56, inner, rule);
+      });
+      y += 40 + rows.length * 76 + 80 * air;
+    }
+
+    },
+    about: () => {
+    /* ---- ABOUT（非対称レイアウト） ---- */
+    const aw = inner * 0.46;
+    const tw = inner - aw - 76;
+    artwork(ctx, pad, y, aw, 420, t.card, p, a.hero === "product" ? "scenery" : "person", seed + 41, font, initial);
+    const tx = pad + aw + 76;
+    eyebrow("ABOUT", tx, y + 34);
+    display(k.aboutTitle, tx, y + 96, 32, p.text);
+    let ay = y + 136;
+    ay += para(ctx, k.aboutBody, tx, ay, tw, bodySize, bodyLh, p.sub, font, 400, "left", bodyLines) + 34;
+    arrowLink(ctx, "わたしたちについて", tx, ay, p.primary, font);
+    y += Math.max(420, ay - y + 40) + 96 * air;
+
+    },
+    goalSection: () => {
+    /* ---- 目的別セクション ---- */
+    if (a.goal === "lead") {
+      box(ctx, pad, y, inner, 372, t.card, p.soft);
+      eyebrow("CONTACT", W / 2, y + 56, "center");
+      display("お問い合わせ", W / 2, y + 106, 28, p.text, "center");
+      para(ctx, "内容を確認のうえ、1営業日以内にご返信いたします。", W / 2, y + 138, 560, 13, 22, p.sub, font, 400, "center", 1);
+      const fw = 560;
+      const fx = W / 2 - fw / 2;
+      ["お名前", "メールアドレス", "ご相談内容"].forEach((lb, i) => {
+        const fy = y + 166 + i * 52;
+        box(ctx, fx, fy, fw, 42, t.radius ? 21 : 2, "#ffffff");
+        ctx.save();
+        ctx.fillStyle = rgba(p.sub, 0.8);
+        ctx.font = `400 13px ${font}`;
+        ctx.textBaseline = "middle";
+        ctx.fillText(lb, fx + 18, fy + 21);
+        ctx.restore();
+      });
+      solidBtn(W / 2 - 110, y + 322 - 2, "送信する", p.primary, "#ffffff", 220, 46);
+      y += 372 + 96 * air;
+    } else if (a.goal === "fan") {
+      eyebrow("FOLLOW", W / 2, y, "center");
+      display("SNSでも発信しています", W / 2, y + 50, 28, p.text, "center");
+      const names = ["Instagram", "TikTok", "YouTube", "X", "note"];
+      names.forEach((n, i) => {
+        const cx = W / 2 - (names.length - 1) * 60 + i * 120;
+        box(ctx, cx - 34, y + 88, 68, 68, t.radius ? 34 : 4, i % 2 ? p.accent : p.primary);
+        ctx.save();
+        ctx.fillStyle = "#ffffff";
+        ctx.font = `700 15px ${font}`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(n.slice(0, 2), cx, y + 123);
+        ctx.fillStyle = p.sub;
+        ctx.font = `400 11px ${font}`;
+        ctx.textBaseline = "alphabetic";
+        ctx.fillText(n, cx, y + 178);
+        ctx.restore();
+      });
+      box(ctx, W / 2 - 160, y + 208, 320, 58, t.radius ? 29 : 2, "#06c755", 20);
+      ctx.save();
+      ctx.fillStyle = "#ffffff";
       ctx.font = `700 17px ${font}`;
-      ctx.fillText(it.name, cx, y + cw * 1.15 + 40);
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("LINE友だち追加", W / 2, y + 237);
       ctx.restore();
-      para(ctx, it.desc, cx, y + cw * 1.15 + 68, cw, 13, 22, p.sub, font, 400, "left", a.density === "heavy" ? 3 : 2);
-      hairline(ctx, cx, y + cw * 1.15 + 124, cw, rule);
+      y += 300 + 96 * air;
+    }
+
+    },
+    list: () => {
+    /* ---- 一覧セクション ---- */
+    if (a.layout !== "card") {
+      const used = sectionHead(k.secLabel, k.secTitle, y, k.secLead);
       ctx.save();
-      ctx.fillStyle = p.text;
-      ctx.font = `600 15px ${font}`;
-      ctx.fillText(it.price, cx, y + cw * 1.15 + 152);
+      ctx.textAlign = "right";
+      ctx.fillStyle = p.primary;
+      ctx.font = `600 13px ${font}`;
+      ctx.fillText("すべて見る →", W - pad, y + 84);
       ctx.restore();
-    });
-    y += cw * 1.15 + 190 + 90 * air;
-  }
+      y += used + 44;
+      const shown = itemCount <= k.items.length ? k.items.slice(0, itemCount) : [...k.items, k.items[0]].slice(0, itemCount);
+      const cw = (inner - 28 * (shown.length - 1)) / shown.length;
+      shown.forEach((it, i) => {
+        const cx = pad + i * (cw + 28);
+        artwork(ctx, cx, y, cw, cw * 1.15, t.card, p, secKinds[i % 3], seed + i * 613, font, initial);
+        ctx.save();
+        ctx.fillStyle = p.text;
+        ctx.font = `700 17px ${font}`;
+        ctx.fillText(it.name, cx, y + cw * 1.15 + 40);
+        ctx.restore();
+        para(ctx, it.desc, cx, y + cw * 1.15 + 68, cw, 13, 22, p.sub, font, 400, "left", a.density === "heavy" ? 3 : 2);
+        hairline(ctx, cx, y + cw * 1.15 + 124, cw, rule);
+        ctx.save();
+        ctx.fillStyle = p.text;
+        ctx.font = `600 15px ${font}`;
+        ctx.fillText(it.price, cx, y + cw * 1.15 + 152);
+        ctx.restore();
+      });
+      y += cw * 1.15 + 190 + 90 * air;
+    }
 
-  /* ---- お客様の声：全サイトに必ず置くのをやめ、本当に効く業種だけに ---- */
-  // 文章量の選択でページの丈を大きく変える。少なめなら声は省き、しっかり読ませるなら必ず置く
-  const needsProof =
-    a.density !== "light" &&
-    (a.density === "heavy" ||
-      a.goal === "lead" ||
-      a.industry === "salon" ||
-      a.industry === "stay" ||
-      a.industry === "school");
-  if (needsProof) {
-    hairline(ctx, pad, y, inner, rule);
-    ctx.save();
-    ctx.fillStyle = rgba(p.primary, 0.25);
-    ctx.font = `700 64px ${serif}`;
-    ctx.fillText("“", pad, y + 74);
-    ctx.restore();
-    display(k.quote, pad + 74, y + 78, 26, p.text);
-    para(ctx, k.voice, pad + 74, y + 122, inner * 0.56, 14, 27, p.sub, font, 400, "left", 3);
-    ctx.save();
-    ctx.fillStyle = p.sub;
-    ctx.font = `500 12px ${font}`;
-    ctx.letterSpacing = "1px";
-    ctx.fillText(k.who, pad + 74, y + 224);
-    ctx.restore();
-    artwork(ctx, W - pad - 200, y + 40, 200, 200, 0, p, "person", seed + 77, font, initial);
-    hairline(ctx, pad, y + 268, inner, rule);
-    y += 268 + 92 * air;
+    },
+    voice: () => {
+    /* ---- お客様の声：全サイトに必ず置くのをやめ、本当に効く業種だけに ---- */
+    // 文章量の選択でページの丈を大きく変える。少なめなら声は省き、しっかり読ませるなら必ず置く
+    const needsProof =
+      a.density !== "light" &&
+      (a.density === "heavy" ||
+        a.goal === "lead" ||
+        a.industry === "salon" ||
+        a.industry === "stay" ||
+        a.industry === "school");
+    if (needsProof) {
+      hairline(ctx, pad, y, inner, rule);
+      ctx.save();
+      ctx.fillStyle = rgba(p.primary, 0.25);
+      ctx.font = `700 64px ${serif}`;
+      ctx.fillText("“", pad, y + 74);
+      ctx.restore();
+      display(k.quote, pad + 74, y + 78, 26, p.text);
+      para(ctx, k.voice, pad + 74, y + 122, inner * 0.56, 14, 27, p.sub, font, 400, "left", 3);
+      ctx.save();
+      ctx.fillStyle = p.sub;
+      ctx.font = `500 12px ${font}`;
+      ctx.letterSpacing = "1px";
+      ctx.fillText(k.who, pad + 74, y + 224);
+      ctx.restore();
+      artwork(ctx, W - pad - 200, y + 40, 200, 200, 0, p, "person", seed + 77, font, initial);
+      hairline(ctx, pad, y + 268, inner, rule);
+      y += 268 + 92 * air;
 
-  }
+    }
+
+    },
+  };
+  sectionPlanFor(a).forEach((key) => SECTIONS[key]?.());
 
   /* ---- CTA（フルブリードの写真帯） ---- */
   const bandH = 340;
