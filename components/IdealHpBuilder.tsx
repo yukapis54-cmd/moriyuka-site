@@ -2348,6 +2348,48 @@ function drawCinema(ctx: CanvasRenderingContext2D, a: Full, siteName: string, fo
 
 /* ------------------------------ プロ仕様レンダラー ----------------------------- */
 
+/** "never enough" → "Never Enough"。全部大文字より、頭だけ大文字のほうが柔らかく今っぽい */
+function titleCase(text: string): string {
+  return text
+    .toLowerCase()
+    .split(/(\s+)/)
+    .map((w) => (/\s/.test(w) ? w : w.charAt(0).toUpperCase() + w.slice(1)))
+    .join("");
+}
+
+/**
+ * ロゴ（ワードマーク）を描く。
+ * 全部大文字＋太いサンセリフは無難だが野暮ったくなりやすいので、
+ * 落ち着いた空気感を選んだときは細い明朝のイタリック＋大文字小文字混在にする。
+ */
+function wordmark(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  size: number,
+  color: string,
+  font: string,
+  serif: string,
+  tone: string,
+  track = 3,
+) {
+  const elegant = tone === "premium" || tone === "modern" || tone === "patisserie" || tone === "cinema";
+  ctx.save();
+  ctx.fillStyle = color;
+  if (elegant) {
+    // 明朝のイタリックは字面が小さく見えるので、少し大きめに置く
+    ctx.font = `italic 300 ${Math.round(size * 1.34)}px ${serif}`;
+    ctx.letterSpacing = "0px";
+    ctx.fillText(titleCase(text), x, y);
+  } else {
+    ctx.font = `${tone === "pop" || tone === "popwa" ? 800 : 700} ${size}px ${font}`;
+    ctx.letterSpacing = `${track}px`;
+    ctx.fillText(text.toUpperCase(), x, y);
+  }
+  ctx.restore();
+}
+
 function drawSite(ctx: CanvasRenderingContext2D, a: Full, siteName: string, font: string, serif: string): number {
   DESATURATE = a.palette === "mono";
   usePhotosFor(a);
@@ -2479,12 +2521,7 @@ function drawSite(ctx: CanvasRenderingContext2D, a: Full, siteName: string, font
   /* ---- ヘッダー：CTAの配置を目的で出し分ける（ベタ／文字色＋ベタ／反転＋ベタ／TEL＋ベタ） ---- */
   let y = 0;
   const navH = a.goal === "lead" ? 112 : 104;
-  ctx.save();
-  ctx.fillStyle = p.text;
-  ctx.font = `${a.tone === "premium" ? 400 : 700} 22px ${font}`;
-  ctx.letterSpacing = `${3 + t.track * 0.2}px`;
-  ctx.fillText(siteName.toUpperCase(), pad, y + navH / 2 + 8);
-  ctx.restore();
+  wordmark(ctx, siteName, pad, y + navH / 2 + 8, 22, p.text, font, serif, a.tone, 3 + t.track * 0.2);
 
   // 目的別のヘッダーCTAパターン
   const navPattern =
@@ -3080,12 +3117,7 @@ function drawSite(ctx: CanvasRenderingContext2D, a: Full, siteName: string, font
   const fh = 268;
   ctx.fillStyle = p.dark;
   ctx.fillRect(0, y, W, fh);
-  ctx.save();
-  ctx.fillStyle = "#ffffff";
-  ctx.font = `700 20px ${font}`;
-  ctx.letterSpacing = "3px";
-  ctx.fillText(siteName.toUpperCase(), pad, y + 68);
-  ctx.restore();
+  wordmark(ctx, siteName, pad, y + 68, 20, "#ffffff", font, serif, a.tone, 3);
   para(
     ctx,
     "〒000-0000 ◯◯県◯◯市◯◯町1-2-3\n営業時間 9:00–17:00（土日祝を除く）",
