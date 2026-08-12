@@ -28,6 +28,7 @@ const WATCHING = [
   { handle: "thingnld", why: "デザインの「なんか良い」を言語化している" },
   { handle: "goodfreefonts", why: "日本語フリーフォントの紹介" },
   { handle: "terasu_design", why: "実在サイトの良デザイン紹介と、制作者視点の話" },
+  { handle: "kawai_design", why: "AI×デザイン。UIパターン辞典・依頼の順番(brief)の出どころ" },
 ];
 
 const args = process.argv.slice(2);

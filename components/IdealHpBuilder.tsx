@@ -3509,8 +3509,16 @@ export default function IdealHpBuilder() {
     [merged],
   );
   const aiPrompt = useMemo(() => {
-    const toneLabel = QUESTIONS.find((q) => q.key === "tone")?.options.find((o) => o.id === merged.tone)?.label ?? "";
-    return promptFor(merged, siteName.trim(), toneLabel, PALETTES[merged.palette]?.name ?? "");
+    const labelOf = (key: Question["key"]) =>
+      QUESTIONS.find((q) => q.key === key)?.options.find((o) => o.id === merged[key])?.label ?? "";
+    return promptFor(
+      merged,
+      siteName.trim(),
+      labelOf("tone"),
+      PALETTES[merged.palette]?.name ?? "",
+      labelOf("industry"),
+      labelOf("goal"),
+    );
   }, [merged, siteName]);
 
   const copyPrompt = useCallback(() => {
