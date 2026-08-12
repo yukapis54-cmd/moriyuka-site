@@ -52,3 +52,6 @@ cloudflare-env.d.ts
 
 # X の定点観測の取得物（scripts/x-scan.mjs）
 .x-scan/
+
+# 参考LPのスクショ（scripts/lp-shots.mjs）
+.lp-shots/

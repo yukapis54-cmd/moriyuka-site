@@ -75,6 +75,7 @@ const QUESTIONS: Question[] = [
       { id: "plum", label: "葡萄・パープル", desc: "上品・個性・クリエイティブ", swatch: ["#5b3a67", "#a982b8", "#f3edf6"] },
       { id: "charcoal", label: "墨＋朱", desc: "凛とした・和・力強さ", swatch: ["#1c1c1c", "#c8402f", "#f2efe9"] },
       { id: "mint", label: "ミント・淡青緑", desc: "清潔・軽やか・医療/美容", swatch: ["#12796e", "#7fd0c4", "#e9f6f4"] },
+      { id: "midnight", label: "黒×金", desc: "背景ごと黒に反転。老舗・高級・写真が主役", swatch: ["#0d0d10", "#c9a227", "#f4f1ea"] },
     ],
   },
   {
@@ -224,6 +225,20 @@ const PALETTES: Record<string, Palette> = {
     text: "#2c1f31",
     sub: "#77687e",
     dark: "#231729",
+  },
+  // 背景そのものを黒に反転させる配色。白ベースの案と並べると、まず別のサイトに見える。
+  // 描画側は p.bg / p.text / p.soft / p.line を通しているので、ここの値だけで全体が反転する。
+  midnight: {
+    name: "Midnight Gold",
+    bg: "#0d0d10",
+    soft: "#17171c",
+    line: "#2b2b33",
+    primary: "#c9a227",
+    primaryDeep: "#e5c76b",
+    accent: "#c9a227",
+    text: "#f4f1ea",
+    sub: "#9b968c",
+    dark: "#000000",
   },
   charcoal: {
     name: "Sumi & Vermilion",
@@ -2466,7 +2481,8 @@ function drawSite(ctx: CanvasRenderingContext2D, a: Full, siteName: string, font
   const air = t.air;
   const rule = rgba(p.text, 0.12);
   const initial = (siteName.trim()[0] || "M").toUpperCase();
-  const bodyLines = a.density === "light" ? 3 : a.density === "balanced" ? 5 : 8;
+  // 実在のLPは縦 4,000px のものから 13,000px のものまである。診断もそのくらい振る
+  const bodyLines = a.density === "light" ? 2 : a.density === "balanced" ? 5 : 11;
   // 文章量は「行数」だけでなく、載せる項目数と写真の大きさにも効かせる
   const itemCount = a.density === "light" ? 2 : a.density === "balanced" ? 3 : 4;
   const bodySize = 15;
@@ -2932,7 +2948,8 @@ function drawSite(ctx: CanvasRenderingContext2D, a: Full, siteName: string, font
   }
 
   /* ---- シグネチャ：一点だけ過剰にする ---- */
-  const sig = signatureFor(a, seed);
+  // 「少なめ」を選んだ人には出さない。セクションを削ることでページの丈そのものを変える
+  const sig = a.density === "light" ? "none" : signatureFor(a, seed);
   if (sig === "oversizedType") {
     // 画面幅いっぱいの極大タイポ。読ませる前に「殴る」。
     const word = k.h1[1].replace(/[。、]/g, "");
@@ -3116,7 +3133,14 @@ function drawSite(ctx: CanvasRenderingContext2D, a: Full, siteName: string, font
   }
 
   /* ---- お客様の声：全サイトに必ず置くのをやめ、本当に効く業種だけに ---- */
-  const needsProof = a.goal === "lead" || a.industry === "salon" || a.industry === "stay" || a.industry === "school";
+  // 文章量の選択でページの丈を大きく変える。少なめなら声は省き、しっかり読ませるなら必ず置く
+  const needsProof =
+    a.density !== "light" &&
+    (a.density === "heavy" ||
+      a.goal === "lead" ||
+      a.industry === "salon" ||
+      a.industry === "stay" ||
+      a.industry === "school");
   if (needsProof) {
     hairline(ctx, pad, y, inner, rule);
     ctx.save();
