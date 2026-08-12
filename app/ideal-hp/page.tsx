@@ -103,6 +103,12 @@ export default function IdealHpPage() {
               この画像を見せて相談する
             </Link>
             <Link
+              href="/sample-lp"
+              className="rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            >
+              実際に作ったページを見る
+            </Link>
+            <Link
               href="/#newsletter"
               className="rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
             >

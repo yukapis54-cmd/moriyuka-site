@@ -33,6 +33,11 @@ const config: Config = {
           800: "#984718",
           900: "#7b3c17",
         },
+        namako: {
+          black: "#0d0d10",
+          gold: "#c9a227",
+          ivory: "#f4f1ea",
+        },
       },
       fontFamily: {
         sans: [
