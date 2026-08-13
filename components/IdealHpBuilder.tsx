@@ -465,43 +465,6 @@ function displayStackFor(tone: string): string {
   return base;
 }
 
-/**
- * 空気感の選択肢に出す、実物のLPデザイン。
- * 手描きのミニチュアだと選択肢どうしの差が見えず、選んでも変わった気がしないため。
- * 画像は guides/references の生成デザインを縮小したもの（public/samples）。
- */
-const SAMPLE_THUMBS: Record<string, string> = {
-  "tone:natural": "/samples/tone-natural.jpg",
-  "tone:modern": "/samples/tone-modern.jpg",
-  "tone:premium": "/samples/tone-premium.jpg",
-  "tone:pop": "/samples/tone-pop.jpg",
-  "tone:patisserie": "/samples/tone-patisserie.jpg",
-  "tone:cinema": "/samples/tone-cinema.jpg",
-  // 目的とレイアウトは、切り出した素材を積んで作ったサンプル
-  // （scripts/compose-sample.mjs の RECIPES で組み立てている）
-  "goal:shop": "/samples/goal-shop.jpg",
-  "goal:lead": "/samples/goal-lead.jpg",
-  "goal:brand": "/samples/goal-brand.jpg",
-  "goal:fan": "/samples/goal-fan.jpg",
-  "layout:fullhero": "/samples/layout-fullhero.jpg",
-  "layout:split": "/samples/layout-split.jpg",
-  "layout:card": "/samples/layout-card.jpg",
-  "layout:magazine": "/samples/layout-magazine.jpg",
-  "hero:person": "/samples/hero-person.jpg",
-  "hero:product": "/samples/hero-product.jpg",
-  "hero:scenery": "/samples/hero-scenery.jpg",
-  "hero:logo": "/samples/hero-logo.jpg",
-  // 文章の量は、積んだ素材の数がそのまま丈の違いになる
-  "density:light": "/samples/density-light.jpg",
-  "density:balanced": "/samples/density-balanced.jpg",
-  "density:heavy": "/samples/density-heavy.jpg",
-  // 配色は素材のあるものだけ。残りは手描きのミニチュアのまま
-  "palette:mono": "/samples/palette-mono.jpg",
-  "palette:rose": "/samples/palette-rose.jpg",
-  "palette:earth": "/samples/palette-earth.jpg",
-  "palette:midnight": "/samples/palette-midnight.jpg",
-};
-
 /** モノトーン配色のときだけ写真の彩度を落とす */
 let DESATURATE = false;
 function a_desaturate(_kind: string): boolean {
@@ -3868,18 +3831,7 @@ export default function IdealHpBuilder() {
                   }`}
                 >
                   <div className="overflow-hidden rounded-lg bg-slate-100">
-                    {/* 実物のデザインがある空気感は、手描きのミニチュアより
-                        こちらのほうが違いが一目で伝わる */}
-                    {SAMPLE_THUMBS[`${current.key}:${o.id}`] ? (
-                      <img
-                        src={SAMPLE_THUMBS[`${current.key}:${o.id}`]}
-                        alt=""
-                        loading="lazy"
-                        className="block h-[168px] w-full object-cover object-top"
-                      />
-                    ) : (
-                      <OptionThumb preview={preview} version={photoVersion} />
-                    )}
+                    <OptionThumb preview={preview} version={photoVersion} />
                   </div>
                   <div className="mt-3 flex items-center gap-2 px-1">
                     <span className="font-bold text-slate-900">{o.label}</span>
