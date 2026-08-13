@@ -4,13 +4,31 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import PHOTO_QUERIES from "../data/photo-queries.json";
 import { reasonsFor, type DesignReason } from "./uiPatterns";
+import LeadForm from "./diagnosis/LeadForm";
 
 /* ================================ questions =============================== */
 
+/** 完成イメージの描画を左右する軸。これらは1つだけ選ぶ */
+type EngineKey =
+  | "industry"
+  | "goal"
+  | "tone"
+  | "palette"
+  | "layout"
+  | "hero"
+  | "density"
+  | "typography"
+  | "photomood";
+/** 描画には効かないが、相談時に必要な情報。複数選べる */
+type ExtraKey = "target" | "features";
+
 type Question = {
-  key: "industry" | "goal" | "tone" | "palette" | "layout" | "hero" | "density";
+  key: EngineKey | ExtraKey;
   title: string;
   hint: string;
+  /** true なら複数選択。max を超えると古いものから外れる */
+  multi?: boolean;
+  max?: number;
   options: { id: string; label: string; desc: string; swatch?: string[] }[];
 };
 
@@ -103,6 +121,43 @@ const QUESTIONS: Question[] = [
     ],
   },
   {
+    key: "target",
+    title: "誰に見てもらいたい？",
+    hint: "読み手が決まると、写真も言葉も決まります。複数選べます。",
+    multi: true,
+    max: 3,
+    options: [
+      { id: "f20", label: "20〜30代女性", desc: "SNSで見つけて来る層" },
+      { id: "f40", label: "40代以上女性", desc: "じっくり選ぶ・贈答も多い" },
+      { id: "m30", label: "20〜40代男性", desc: "比較して決める" },
+      { id: "senior", label: "50代以上", desc: "文字は大きく、電話も残す" },
+      { id: "biz", label: "法人・経営者", desc: "実績と信頼で判断する" },
+      { id: "family", label: "ファミリー", desc: "安心・わかりやすさが要る" },
+    ],
+  },
+  {
+    key: "typography",
+    title: "文字の雰囲気は？",
+    hint: "書体が変わるだけで、同じ内容でも印象が変わります。",
+    options: [
+      { id: "mincho", label: "上品な明朝", desc: "落ち着き・信頼・和の品" },
+      { id: "sans", label: "シンプルなゴシック", desc: "現代的・読みやすい" },
+      { id: "brush", label: "筆書きに近い明朝", desc: "老舗・手仕事・重み" },
+      { id: "round", label: "丸みのある書体", desc: "やわらかい・親しみ" },
+    ],
+  },
+  {
+    key: "photomood",
+    title: "写真はどんな雰囲気が好き？",
+    hint: "ここで完成イメージに入る写真そのものが変わります。",
+    options: [
+      { id: "soft", label: "自然光・やわらかい", desc: "明るく穏やか" },
+      { id: "editorial", label: "雑誌のような静けさ", desc: "余白と質感で見せる" },
+      { id: "vivid", label: "明るく鮮やか", desc: "元気・食欲・楽しさ" },
+      { id: "moody", label: "暗く映画のよう", desc: "陰影が強い・高級感" },
+    ],
+  },
+  {
     key: "density",
     title: "文章の量は？",
     hint: "スクロールの長さが変わります。",
@@ -112,10 +167,35 @@ const QUESTIONS: Question[] = [
       { id: "heavy", label: "しっかり読ませる", desc: "想いや実績を丁寧に" },
     ],
   },
+  {
+    key: "features",
+    title: "必要なものはどれ？",
+    hint: "あとから足すより、最初に決めておくほうが安く済みます。複数選べます。",
+    multi: true,
+    max: 6,
+    options: [
+      { id: "contact", label: "お問い合わせフォーム", desc: "メールで受け取る" },
+      { id: "reserve", label: "予約フォーム", desc: "日時を選んでもらう" },
+      { id: "line", label: "LINE連携", desc: "友だち追加・相談" },
+      { id: "instagram", label: "Instagram連携", desc: "投稿を自動で表示" },
+      { id: "map", label: "Googleマップ", desc: "場所を示す" },
+      { id: "blog", label: "ブログ・お知らせ", desc: "自分で更新できる" },
+      { id: "menu", label: "メニュー・料金表", desc: "価格を明示する" },
+      { id: "ec", label: "ネット販売", desc: "カートと決済" },
+      { id: "recruit", label: "採用情報", desc: "人を集める" },
+    ],
+  },
 ];
 
-type Answers = Partial<Record<Question["key"], string>>;
-type Full = Required<Answers>;
+/** 複数選択の設問は、選んだ id をカンマでつないで1つの値として持つ */
+type Answers = Partial<Record<EngineKey | ExtraKey, string>>;
+type Full = Record<EngineKey, string>;
+
+/** 複数選択の値を配列に開く */
+function picked(answers: Answers, key: EngineKey | ExtraKey): string[] {
+  const v = answers[key];
+  return v ? v.split(",").filter(Boolean) : [];
+}
 
 /** 未回答の項目はこの値でプレビューする */
 const DEFAULTS: Full = {
@@ -126,6 +206,8 @@ const DEFAULTS: Full = {
   layout: "split",
   hero: "scenery",
   density: "balanced",
+  typography: "mincho",
+  photomood: "soft",
 };
 
 /* ================================= theme ================================== */
@@ -458,8 +540,13 @@ const QUERY_CACHE = new Map<string, Promise<{ images: HTMLImageElement[]; credit
  * 空気感ごとの見出し書体。書体が変わるだけで印象がどれだけ動くかを、診断で体験してもらう。
  * canvas は CSS 変数を解釈しないので、この指定をプローブ要素に当てて実測値を取り出す。
  */
-function displayStackFor(tone: string): string {
+function displayStackFor(tone: string, typography?: string): string {
   const base = "var(--font-display-jp), var(--font-serif-jp), serif";
+  // 書体の設問で選ばれたものを最優先する。無ければ空気感から決める
+  if (typography === "brush") return `var(--font-wa-jp), ${base}`;
+  if (typography === "round") return `var(--font-sweet-jp), ${base}`;
+  if (typography === "sans") return '"Noto Sans JP", sans-serif';
+  if (typography === "mincho") return base;
   if (tone === "wamodern") return `var(--font-wa-jp), ${base}`; // 筆書きに近い明朝
   if (tone === "patisserie") return `var(--font-sweet-jp), ${base}`; // 丸みのある明朝
   return base;
@@ -486,7 +573,8 @@ const STYLE_BY_TONE = PHOTO_QUERIES.styleByTone as Record<string, string>;
  */
 function queriesFor(a: Full): Record<PhotoKind, string> {
   const base = INDUSTRY_QUERIES[a.industry] ?? INDUSTRY_QUERIES.seafood;
-  const style = STYLES[STYLE_BY_TONE[a.tone]] ?? "";
+  // 写真の雰囲気を直接選んでいればそれを使う。無ければ空気感から決める
+  const style = STYLES[a.photomood] ?? STYLES[STYLE_BY_TONE[a.tone]] ?? "";
   const flavor = (q: string) => (style ? `${q} ${style}` : q);
   return {
     person: base.person,
@@ -3797,7 +3885,7 @@ export default function IdealHpBuilder() {
         ref={serifRef}
         aria-hidden
         className="pointer-events-none absolute -left-[9999px] top-0"
-        style={{ fontFamily: displayStackFor(merged.tone) }}
+        style={{ fontFamily: displayStackFor(merged.tone, merged.typography) }}
       >
         明朝
       </span>
@@ -3816,12 +3904,25 @@ export default function IdealHpBuilder() {
           <p className="mt-2 text-sm text-slate-500">{current.hint}</p>
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             {current.options.map((o) => {
-              const selected = answers[current.key] === o.id;
+              const selected = current.multi
+                ? picked(answers, current.key).includes(o.id)
+                : answers[current.key] === o.id;
               const preview = { ...DEFAULTS, ...answers, [current.key]: o.id } as Full;
               return (
                 <button
                   key={o.id}
                   onClick={() => {
+                    if (current.multi) {
+                      // 複数選択は押すたびに入り切りする。上限を超えたら古いものから外す
+                      setAnswers((prev) => {
+                        const now = (prev[current.key] ?? "").split(",").filter(Boolean);
+                        const next = now.includes(o.id)
+                          ? now.filter((x) => x !== o.id)
+                          : [...now, o.id].slice(-(current.max ?? 99));
+                        return { ...prev, [current.key]: next.join(",") };
+                      });
+                      return;
+                    }
                     setAnswers((prev) => ({ ...prev, [current.key]: o.id }));
                     // すでに全問埋まっている＝チップからの修正なので、結果画面に戻す
                     setStep((s) => (complete ? QUESTIONS.length : s + 1));
@@ -3852,6 +3953,21 @@ export default function IdealHpBuilder() {
               );
             })}
           </div>
+          {current.multi && (
+            <div className="mt-6 flex items-center gap-4">
+              <button
+                onClick={() => setStep((v) => (complete ? QUESTIONS.length : v + 1))}
+                disabled={picked(answers, current.key).length === 0}
+                className="rounded-xl bg-ocean-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-ocean-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+              >
+                次へ進む
+              </button>
+              <span className="text-xs text-slate-500">
+                {picked(answers, current.key).length} 個選択中
+                {current.max ? `（最大 ${current.max}）` : ""}
+              </span>
+            </div>
+          )}
           </div>
 
           {/* いまの選択で作った完成形を、質問中もずっと見せておく */}
@@ -3999,6 +4115,16 @@ export default function IdealHpBuilder() {
           </div>
 
           <PatternGuide reasons={reasons} />
+
+          {/* 診断結果をそのまま渡す。同じことを二度書かせない */}
+          <div className="mx-auto mt-16 max-w-3xl">
+            <LeadForm
+              summary={QUESTIONS.map((q) => ({
+                label: q.title.replace(/[？?]/g, ""),
+                value: q.options.find((o) => o.id === answers[q.key])?.label ?? "",
+              })).concat({ label: "サイト名", value: siteName.trim() || "未入力" })}
+            />
+          </div>
         </div>
       )}
     </div>

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Kaisei_Decol, Noto_Serif_JP, Shippori_Mincho, Yuji_Syuku } from "next/font/google";
 import IdealHpBuilder from "@/components/IdealHpBuilder";
+import ServiceHero from "@/components/diagnosis/ServiceHero";
+import ProcessSteps from "@/components/diagnosis/ProcessSteps";
 
 // 完成イメージの見出しに使う明朝。これがあるだけで「素人のワイヤー」感が消える。
 // 日本語グリフが必要なので japanese サブセットを明示する（latin だけだと明朝にならない）
@@ -45,21 +47,13 @@ export const metadata: Metadata = {
 export default function IdealHpPage() {
   return (
     <main className={`min-h-screen bg-white ${serifJP.variable} ${displayJP.variable} ${waJP.variable} ${sweetJP.variable}`}>
-      <section className="border-b border-slate-100 bg-gradient-to-b from-ocean-50 to-white">
-        <div className="mx-auto w-full max-w-3xl px-5 py-14 text-center">
-          <p className="text-xs font-semibold tracking-widest text-ocean-600">DESIGN DIAGNOSIS</p>
-          <h1 className="mt-3 text-3xl font-bold leading-tight text-slate-900 sm:text-4xl">
-            あなたの理想のHPは？
-          </h1>
-          <p className="mt-4 text-sm leading-relaxed text-slate-600 sm:text-base">
-            選んでいくだけ。7問で、あなたのイメージにいちばん近いホームページの
-            <br className="hidden sm:block" />
-            完成イメージ画像がその場でできあがります。
-          </p>
-        </div>
-      </section>
+      <ServiceHero ctaHref="#start" />
 
-      <IdealHpBuilder />
+      <div id="start">
+        <IdealHpBuilder />
+      </div>
+
+      <ProcessSteps />
 
       {/* 診断で終わらせない。ここまで分かった人が次に困るのは「で、誰が作るのか」 */}
       <section className="border-t border-slate-100 bg-gradient-to-b from-white to-ocean-50">
