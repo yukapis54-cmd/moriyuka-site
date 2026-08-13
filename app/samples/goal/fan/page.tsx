@@ -142,7 +142,7 @@ export default function GoalFanSamplePage() {
         </div>
       </section>
 
-      <div className="sticky bottom-0 border-t border-komugi-rust/20 bg-komugi-cream/96 px-4 py-3 backdrop-blur">
+      <div className="sticky bottom-0 border-t border-komugi-rust/20 bg-komugi-cream/95 px-4 py-3 backdrop-blur">
         <div className="mx-auto flex max-w-content items-center justify-between gap-3">
           <p className="flex items-center gap-2 text-sm font-bold">
             <Music2 size={17} className="text-komugi-rust" />

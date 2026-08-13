@@ -129,7 +129,7 @@ export default function GoalShopSamplePage() {
         </div>
       </section>
 
-      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-komugi-rust/20 bg-komugi-cream/96 px-4 py-3 shadow-[0_-8px_24px_rgba(74,55,40,0.12)] backdrop-blur">
+      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-komugi-rust/20 bg-komugi-cream/95 px-4 py-3 shadow-[0_-8px_24px_rgba(74,55,40,0.12)] backdrop-blur">
         <div className="mx-auto flex max-w-content items-center justify-between gap-3">
           <div>
             <p className="text-xs font-bold tracking-[0.16em] text-komugi-rust">ONLINE STORE</p>
