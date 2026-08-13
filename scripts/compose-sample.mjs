@@ -55,6 +55,35 @@ const RECIPES = {
     "adult-mellty-lp/section-08.png",
   ],
 
+  // メインビジュアルの主役。1枚目に何が写っているかで選ぶ
+  "hero-person": ["mode-lunea-lp/section-02.png", "mode-lunea-lp/section-05.png"],
+  "hero-product": ["korean-moru-cafe-lp/section-03.png", "korean-moru-cafe-lp/section-04.png"],
+  "hero-scenery": ["cafe-harmonie-lp/section-01.png", "cafe-harmonie-lp/section-02.png"],
+  "hero-logo": ["korean-moru-cafe-lp/section-01.png", "korean-moru-cafe-lp/section-02.png"],
+
+  // 文章の量。積む素材の数がそのままページの丈になるので、違いが一目で分かる
+  "density-light": ["cafe-harmonie-lp/section-01.png", "cafe-harmonie-lp/section-07.png"],
+  "density-balanced": [
+    "cafe-harmonie-lp/section-01.png",
+    "cafe-harmonie-lp/section-02.png",
+    "cafe-harmonie-lp/section-04.png",
+    "cafe-harmonie-lp/section-07.png",
+  ],
+  "density-heavy": [
+    "cafe-harmonie-lp/section-01.png",
+    "cafe-harmonie-lp/section-02.png",
+    "cafe-harmonie-lp/section-04.png",
+    "cafe-harmonie-lp/section-05.png",
+    "cafe-harmonie-lp/section-06.png",
+    "cafe-harmonie-lp/section-07.png",
+  ],
+
+  // 色の方向性。素材のあるものだけ差し替え、残りは手描きのままにする
+  "palette-mono": ["mode-lunea-lp/section-01.png", "mode-lunea-lp/section-02.png"],
+  "palette-rose": ["girly-mellty-lp/section-01.png", "girly-mellty-lp/section-03.png"],
+  "palette-earth": ["cafe-harmonie-lp/section-01.png", "cafe-harmonie-lp/section-04.png"],
+  "palette-midnight": ["mode-lumina-lp-1/section-01.png", "mode-lumina-lp-1/section-02.png"],
+
   // トップページの組み方。ヒーローの型が違うものを別ブランドから採る
   "layout-fullhero": ["mode-lunea-lp/section-01.png", "mode-lunea-lp/section-03.png", "mode-lunea-lp/section-04.png"],
   "layout-split": ["adult-mellty-lp/section-01.png", "adult-mellty-lp/section-05.png", "adult-mellty-lp/section-08.png"],

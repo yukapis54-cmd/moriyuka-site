@@ -487,6 +487,19 @@ const SAMPLE_THUMBS: Record<string, string> = {
   "layout:split": "/samples/layout-split.jpg",
   "layout:card": "/samples/layout-card.jpg",
   "layout:magazine": "/samples/layout-magazine.jpg",
+  "hero:person": "/samples/hero-person.jpg",
+  "hero:product": "/samples/hero-product.jpg",
+  "hero:scenery": "/samples/hero-scenery.jpg",
+  "hero:logo": "/samples/hero-logo.jpg",
+  // 文章の量は、積んだ素材の数がそのまま丈の違いになる
+  "density:light": "/samples/density-light.jpg",
+  "density:balanced": "/samples/density-balanced.jpg",
+  "density:heavy": "/samples/density-heavy.jpg",
+  // 配色は素材のあるものだけ。残りは手描きのミニチュアのまま
+  "palette:mono": "/samples/palette-mono.jpg",
+  "palette:rose": "/samples/palette-rose.jpg",
+  "palette:earth": "/samples/palette-earth.jpg",
+  "palette:midnight": "/samples/palette-midnight.jpg",
 };
 
 /** モノトーン配色のときだけ写真の彩度を落とす */
