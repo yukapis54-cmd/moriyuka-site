@@ -128,7 +128,8 @@ const result = await page.evaluate(
     cuts.push(H);
     cuts.sort((a, b) => a - b);
 
-    // 薄すぎるセクションは前にくっつける
+    // 薄すぎるセクションは前にくっつける。
+    // 先頭は「前」が無いので、次のセクションの頭に繰り入れる（2px の断片が出るのを防ぐ）
     const bounds = [];
     for (let i = 0; i < cuts.length - 1; i++) {
       const top = cuts[i];
@@ -138,6 +139,10 @@ const result = await page.evaluate(
       } else {
         bounds.push({ top, bottom });
       }
+    }
+    while (bounds.length > 1 && bounds[0].bottom - bounds[0].top < minSection) {
+      bounds[1].top = bounds[0].top;
+      bounds.shift();
     }
 
     const out = [];
