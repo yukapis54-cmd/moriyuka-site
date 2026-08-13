@@ -342,6 +342,11 @@ export function reasonsFor(a: Answers, paletteName: string): DesignReason[] {
   }
 
   reasons.push({
+    title: "「いい感じに」で決めていない",
+    body: "この画面は、色も余白も文字の大きさも、先に数値で決めてから置いています。AIに作らせた画面が「なんかAIっぽい」と感じられるのは、絵が下手だからではなく、判断を丸投げした結果、無難な平均値が返ってくるからです。手本を1つ決めて渡すだけで、出てくるものの顔は変わります。",
+  });
+
+  reasons.push({
     title: "効果は全面ではなく一部にだけかけている",
     body: "質感・柄・強い色は、画面の一部にだけ入れています。全面にかけると必ずやりすぎになります。「少しだけ、片側だけ」が、こなれて見えるかどうかの分かれ目です。",
   });
@@ -369,41 +374,3 @@ const BRIEF_BY_GOAL: Record<string, { reader: string; promise: string }> = {
   brand: { reader: "誰が作っているのかを知ってから決めたい人", promise: "作り手の考えていることが伝わる" },
   fan: { reader: "一度知って、続きが気になっている人", promise: "また見に来る理由ができる" },
 };
-
-/**
- * そのまま AI に貼れる日本語の指示文。
- * 「こんな感じで」と頼むと何度もやり直しになるので、
- * 前提（brief）→ 使う型 → 直す観点、の順に固めた依頼書の形にしている。
- */
-export function promptFor(
-  a: Answers,
-  siteName: string,
-  toneLabel: string,
-  paletteName: string,
-  industryLabel = "",
-  goalLabel = "",
-): string {
-  const patterns = patternsFor(a);
-  const brief = BRIEF_BY_GOAL[a.goal] ?? BRIEF_BY_GOAL.shop;
-  const reasons = reasonsFor(a, paletteName);
-  return [
-    "# 前提（ここを先に読んでください）",
-    `- テーマ: ${siteName || "私の店"}${industryLabel ? `（${industryLabel}）` : ""}のトップページ`,
-    `- このページの目的: ${goalLabel || "商品を買ってもらう"}`,
-    `- 読み手: ${brief.reader}　★自分の言葉に書き換えてください`,
-    `- 読み終えた時の約束: ${brief.promise}　★同上`,
-    `- 印象: ${toneLabel} / 配色は ${paletteName}`,
-    "- 禁止: 根拠のない「最高品質」「業界No.1」。意味のないダミー英文。字面だけの横文字",
-    "",
-    "# 使ってほしい UI パターン",
-    ...patterns.map((p) => `- ${p.en}（${p.ja}）: ${p.desc}`),
-    "",
-    "# 作り方の条件",
-    "- スマートフォンを優先して設計してください（レスポンシブ対応）",
-    "- 見出しと本文のダミーテキストは日本語で入れてください",
-    "- 画像は差し替え前提のプレースホルダーで構いません",
-    "",
-    "# 初稿ができたら、この観点で自分で見直してください",
-    ...reasons.map((r) => `- ${r.title}`),
-  ].join("\n");
-}

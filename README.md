@@ -131,3 +131,15 @@ node scripts/split-sheet.mjs ~/Downloads/素材シート.png --cols 4 --rows 4
 
 四隅から白の領域を辿って外側だけ抜くので、図形の内側の白は残ります。
 ずれる場合は `--trim 8`、透過されない場合は `--tolerance 40` を試してください。
+
+### LPデザイン画像をセクション素材に切り出す
+
+GPT Image などで作った縦長のLPデザイン画像を、セクションごとのPNGに切り分けます。
+
+```bash
+node scripts/slice-design.mjs guides/references/salon-lumiere-lp.png --min-gap 6 --min-section 120
+# → .lp-assets/<画像名>/section-01.png … と sections.json（位置・高さ・代表色）
+```
+
+横一列で色が揃っている行を境目として検出します。切れ目が粗いときは `--min-gap` を小さく、
+細かすぎるときは大きくしてください。

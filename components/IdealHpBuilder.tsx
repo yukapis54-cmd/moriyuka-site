@@ -3,7 +3,7 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import PHOTO_QUERIES from "../data/photo-queries.json";
-import { patternsFor, promptFor, reasonsFor, type DesignReason, type UiPattern } from "./uiPatterns";
+import { patternsFor, reasonsFor, type DesignReason, type UiPattern } from "./uiPatterns";
 
 /* ================================ questions =============================== */
 
@@ -3592,7 +3592,6 @@ export default function IdealHpBuilder() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const serifRef = useRef<HTMLSpanElement | null>(null);
 
-  const [copied, setCopied] = useState(false);
   const [photoVersion, setPhotoVersion] = useState(0);
   const [variant, setVariant] = useState(0);
   const previewRef = useRef<HTMLCanvasElement | null>(null);
@@ -3602,37 +3601,12 @@ export default function IdealHpBuilder() {
   const done = step >= QUESTIONS.length && complete;
   const current = QUESTIONS[Math.min(step, QUESTIONS.length - 1)];
 
-  /** 完成イメージが使っている UI パターンと、そのまま AI に貼れる指示文 */
+  /** 完成イメージが使っている UI パターンと、その見え方の理由 */
   const patterns = useMemo(() => patternsFor(merged), [merged]);
   const reasons = useMemo(
     () => reasonsFor(merged, PALETTES[merged.palette]?.name ?? ""),
     [merged],
   );
-  const aiPrompt = useMemo(() => {
-    const labelOf = (key: Question["key"]) =>
-      QUESTIONS.find((q) => q.key === key)?.options.find((o) => o.id === merged[key])?.label ?? "";
-    return promptFor(
-      merged,
-      siteName.trim(),
-      labelOf("tone"),
-      PALETTES[merged.palette]?.name ?? "",
-      labelOf("industry"),
-      labelOf("goal"),
-    );
-  }, [merged, siteName]);
-
-  const copyPrompt = useCallback(() => {
-    void navigator.clipboard
-      .writeText(aiPrompt)
-      .then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      })
-      .catch(() => {
-        /* 権限が無い環境ではテキストを手で選んでもらう */
-      });
-  }, [aiPrompt]);
-
   const render = useCallback(() => {
     VARIANT = variant;
     const visible = canvasRef.current;
@@ -3829,24 +3803,13 @@ export default function IdealHpBuilder() {
       >
         明朝
       </span>
-      <div className="mb-8 mx-auto max-w-3xl">
-        <div className="mb-2 flex items-center justify-between text-xs text-slate-500">
-          <span>
-            STEP {Math.min(step + 1, QUESTIONS.length)} / {QUESTIONS.length}
-          </span>
-          {step > 0 && (
-            <button onClick={() => setStep((s) => Math.max(0, s - 1))} className="underline hover:text-slate-800">
-              ← 前に戻る
-            </button>
-          )}
-        </div>
-        <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
-          <div
-            className="h-full rounded-full bg-ocean-600 transition-all duration-300"
-            style={{ width: `${(Math.min(step, QUESTIONS.length) / QUESTIONS.length) * 100}%` }}
-          />
-        </div>
-      </div>
+      {/* 進捗バーではなくフローチャート。どこを通ってきたか、次に何を決めるのかが一目で分かる */}
+      <FlowChart
+        answers={answers}
+        step={step}
+        onJump={(i) => setStep(i)}
+        onBack={step > 0 ? () => setStep((s) => Math.max(0, s - 1)) : undefined}
+      />
 
       {!done ? (
         <div key={current.key} className="grid gap-10 lg:grid-cols-[1fr_360px]">
@@ -4019,13 +3982,7 @@ export default function IdealHpBuilder() {
             )}
           </div>
 
-          <PatternGuide
-            patterns={patterns}
-            reasons={reasons}
-            prompt={aiPrompt}
-            onCopy={copyPrompt}
-            copied={copied}
-          />
+          <PatternGuide patterns={patterns} reasons={reasons} />
         </div>
       )}
     </div>
@@ -4033,21 +3990,87 @@ export default function IdealHpBuilder() {
 }
 
 /**
+ * 診断の道のりをフローチャートで見せる。
+ * 進捗バーだと「あと何問か」しか分からないが、これなら
+ * どの分かれ道をどう選んできたか、次に何を決めるのかが同時に見える。
+ * 通ってきた節は押せば戻れるので、比べながら選び直せる。
+ */
+function FlowChart({
+  answers,
+  step,
+  onJump,
+  onBack,
+}: {
+  answers: Answers;
+  step: number;
+  onJump: (index: number) => void;
+  onBack?: () => void;
+}) {
+  return (
+    <div className="mb-8 mx-auto max-w-3xl">
+      <div className="mb-3 flex items-center justify-between text-xs text-slate-500">
+        <span className="font-semibold tracking-widest">
+          {Math.min(step + 1, QUESTIONS.length)} / {QUESTIONS.length}
+        </span>
+        {onBack && (
+          <button onClick={onBack} className="underline hover:text-slate-800">
+            ← 前に戻る
+          </button>
+        )}
+      </div>
+
+      <ol className="flex flex-wrap items-center gap-x-1 gap-y-2">
+        {QUESTIONS.map((q, i) => {
+          const chosen = q.options.find((o) => o.id === answers[q.key]);
+          const isNow = i === step;
+          const isDone = !!chosen;
+          return (
+            <li key={q.key} className="flex items-center">
+              {i > 0 && (
+                <span aria-hidden className={`mx-1 text-xs ${isDone || isNow ? "text-ocean-400" : "text-slate-300"}`}>
+                  →
+                </span>
+              )}
+              <button
+                onClick={() => isDone && onJump(i)}
+                disabled={!isDone}
+                title={isDone ? "ここから選び直す" : q.title}
+                className={
+                  isNow
+                    ? "rounded-lg bg-ocean-600 px-3 py-1.5 text-xs font-bold text-white shadow-sm"
+                    : isDone
+                      ? "rounded-lg border border-ocean-200 bg-ocean-50 px-3 py-1.5 text-xs font-medium text-ocean-800 hover:border-ocean-400 hover:bg-white"
+                      : "rounded-lg border border-dashed border-slate-200 px-3 py-1.5 text-xs text-slate-400"
+                }
+              >
+                {chosen ? chosen.label : q.title.replace(/[？?]/g, "")}
+              </button>
+            </li>
+          );
+        })}
+        <li className="flex items-center">
+          <span aria-hidden className="mx-1 text-xs text-slate-300">
+            →
+          </span>
+          <span className="rounded-lg border border-dashed border-slate-200 px-3 py-1.5 text-xs text-slate-400">
+            完成イメージ
+          </span>
+        </li>
+      </ol>
+    </div>
+  );
+}
+
+/**
  * 「あのUI、なんて頼めばいい？」を解消するセクション。
- * 完成イメージに使われている型に名前を与え、そのまま AI に貼れる指示文まで作る。
+ * 完成イメージに使われている型に、正式な名前を与える。
  */
 function PatternGuide({
   patterns,
   reasons,
-  prompt,
-  onCopy,
-  copied,
 }: {
   patterns: UiPattern[];
   reasons: DesignReason[];
-  prompt: string;
-  onCopy: () => void;
-  copied: boolean;
 }) {
   const categories = Array.from(new Set(patterns.map((p) => p.category)));
   return (
@@ -4099,32 +4122,6 @@ function PatternGuide({
         ))}
       </div>
 
-      <div className="mt-8 rounded-2xl border border-ocean-200 bg-ocean-50/60 p-5">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="font-bold text-slate-900">そのままAIに貼れる指示文</p>
-            <p className="mt-1 text-xs text-slate-500">
-              ChatGPT や Claude に貼り付けると、この構成のページを作らせられます。
-            </p>
-          </div>
-          <button
-            onClick={onCopy}
-            className="rounded-xl bg-ocean-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-ocean-700"
-          >
-            {copied ? "コピーしました" : "指示文をコピー"}
-          </button>
-        </div>
-        {/* 長文なので既定は畳む。コピーするだけの人の邪魔をしない */}
-        <details className="mt-4 group">
-          <summary className="cursor-pointer list-none text-xs font-semibold text-ocean-700 hover:underline">
-            <span className="group-open:hidden">中身を見る ▾</span>
-            <span className="hidden group-open:inline">閉じる ▴</span>
-          </summary>
-          <pre className="mt-3 max-h-72 overflow-auto rounded-xl bg-white p-4 text-xs leading-relaxed text-slate-700 ring-1 ring-slate-200">
-            {prompt}
-          </pre>
-        </details>
-      </div>
     </section>
   );
 }
