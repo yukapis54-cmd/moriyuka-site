@@ -38,6 +38,21 @@ const config: Config = {
           gold: "#c9a227",
           ivory: "#f4f1ea",
         },
+        restaurant: {
+          cream: "#f7efe2",
+          rust: "#6f2418",
+          ink: "#2d1812",
+        },
+        salon: {
+          white: "#fbfbf8",
+          line: "#d8d4cc",
+          ink: "#1c1c1a",
+        },
+        koumuten: {
+          navy: "#0f2438",
+          wood: "#b87943",
+          mist: "#eef2f1",
+        },
       },
       fontFamily: {
         sans: [
