@@ -105,7 +105,28 @@ const result = await page.evaluate(
         run = 0;
       }
     }
+
+    // 黒基調のデザインは無地の行がほとんど無く、上の方法だけでは切れない。
+    // 行の平均色が急に変わるところ（ブロックの境目）も切れ目として拾う。
+    const rowMean = new Float32Array(H);
+    for (let y = 0; y < H; y++) {
+      let sum = 0;
+      let n = 0;
+      for (let x = 0; x < W; x += step) {
+        const i = (y * W + x) * 4;
+        sum += 0.2126 * all[i] + 0.7152 * all[i + 1] + 0.0722 * all[i + 2];
+        n += 1;
+      }
+      rowMean[y] = sum / n;
+    }
+    for (let y = 2; y < H - 2; y++) {
+      const jump = Math.abs(rowMean[y + 1] - rowMean[y - 1]);
+      // 近くに既に切れ目があるなら足さない（同じ境目を二重に拾わない）
+      if (jump > 14 && !cuts.some((c) => Math.abs(c - y) < minSection / 2)) cuts.push(y);
+    }
+
     cuts.push(H);
+    cuts.sort((a, b) => a - b);
 
     // 薄すぎるセクションは前にくっつける
     const bounds = [];
