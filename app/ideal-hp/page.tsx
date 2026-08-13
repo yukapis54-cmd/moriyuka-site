@@ -90,9 +90,8 @@ export default function IdealHpPage() {
             です。文字の揃え、写真の差し替え、スマホでの見え方、表示の速さ。ここに時間がかかります。
           </p>
           <p className="mt-4 text-sm leading-relaxed text-slate-600">
-            自分でやるなら、この診断結果と部品の名前がそのまま設計図になります。
-            人に頼むなら、ダウンロードした画像を見せるだけで話が早く済みます。
-            どちらでも、迷ったら聞いてください。
+            ここまでの内容をそのまま形にするところから、公開して動き続ける状態にするところまで、
+            引き受けています。ダウンロードした画像を見せていただければ、話は早く済みます。
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
@@ -101,18 +100,6 @@ export default function IdealHpPage() {
               className="rounded-xl bg-ocean-600 px-6 py-3 text-sm font-semibold text-white hover:bg-ocean-700"
             >
               この画像を見せて相談する
-            </Link>
-            <Link
-              href="/sample-lp"
-              className="rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-            >
-              実際に作ったページを見る
-            </Link>
-            <Link
-              href="/#newsletter"
-              className="rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-            >
-              作り方をメールで受け取る
             </Link>
           </div>
         </div>
