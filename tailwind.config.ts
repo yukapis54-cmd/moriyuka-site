@@ -43,6 +43,11 @@ const config: Config = {
           rust: "#6f2418",
           ink: "#2d1812",
         },
+        komugi: {
+          cream: "#faf7f2",
+          ink: "#4a3728",
+          rust: "#a8503c",
+        },
         salon: {
           white: "#fbfbf8",
           line: "#d8d4cc",

@@ -3,7 +3,7 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import PHOTO_QUERIES from "../data/photo-queries.json";
-import { patternsFor, reasonsFor, type DesignReason, type UiPattern } from "./uiPatterns";
+import { reasonsFor, type DesignReason } from "./uiPatterns";
 
 /* ================================ questions =============================== */
 
@@ -464,6 +464,30 @@ function displayStackFor(tone: string): string {
   if (tone === "patisserie") return `var(--font-sweet-jp), ${base}`; // 丸みのある明朝
   return base;
 }
+
+/**
+ * 空気感の選択肢に出す、実物のLPデザイン。
+ * 手描きのミニチュアだと選択肢どうしの差が見えず、選んでも変わった気がしないため。
+ * 画像は guides/references の生成デザインを縮小したもの（public/samples）。
+ */
+const SAMPLE_THUMBS: Record<string, string> = {
+  "tone:natural": "/samples/tone-natural.jpg",
+  "tone:modern": "/samples/tone-modern.jpg",
+  "tone:premium": "/samples/tone-premium.jpg",
+  "tone:pop": "/samples/tone-pop.jpg",
+  "tone:patisserie": "/samples/tone-patisserie.jpg",
+  "tone:cinema": "/samples/tone-cinema.jpg",
+  // 目的とレイアウトは、切り出した素材を積んで作ったサンプル
+  // （scripts/compose-sample.mjs の RECIPES で組み立てている）
+  "goal:shop": "/samples/goal-shop.jpg",
+  "goal:lead": "/samples/goal-lead.jpg",
+  "goal:brand": "/samples/goal-brand.jpg",
+  "goal:fan": "/samples/goal-fan.jpg",
+  "layout:fullhero": "/samples/layout-fullhero.jpg",
+  "layout:split": "/samples/layout-split.jpg",
+  "layout:card": "/samples/layout-card.jpg",
+  "layout:magazine": "/samples/layout-magazine.jpg",
+};
 
 /** モノトーン配色のときだけ写真の彩度を落とす */
 let DESATURATE = false;
@@ -3601,8 +3625,6 @@ export default function IdealHpBuilder() {
   const done = step >= QUESTIONS.length && complete;
   const current = QUESTIONS[Math.min(step, QUESTIONS.length - 1)];
 
-  /** 完成イメージが使っている UI パターンと、その見え方の理由 */
-  const patterns = useMemo(() => patternsFor(merged), [merged]);
   const reasons = useMemo(
     () => reasonsFor(merged, PALETTES[merged.palette]?.name ?? ""),
     [merged],
@@ -3833,7 +3855,18 @@ export default function IdealHpBuilder() {
                   }`}
                 >
                   <div className="overflow-hidden rounded-lg bg-slate-100">
-                    <OptionThumb preview={preview} version={photoVersion} />
+                    {/* 実物のデザインがある空気感は、手描きのミニチュアより
+                        こちらのほうが違いが一目で伝わる */}
+                    {SAMPLE_THUMBS[`${current.key}:${o.id}`] ? (
+                      <img
+                        src={SAMPLE_THUMBS[`${current.key}:${o.id}`]}
+                        alt=""
+                        loading="lazy"
+                        className="block h-[168px] w-full object-cover object-top"
+                      />
+                    ) : (
+                      <OptionThumb preview={preview} version={photoVersion} />
+                    )}
                   </div>
                   <div className="mt-3 flex items-center gap-2 px-1">
                     <span className="font-bold text-slate-900">{o.label}</span>
@@ -3982,7 +4015,7 @@ export default function IdealHpBuilder() {
             )}
           </div>
 
-          <PatternGuide patterns={patterns} reasons={reasons} />
+          <PatternGuide reasons={reasons} />
         </div>
       )}
     </div>
@@ -4065,14 +4098,7 @@ function FlowChart({
  * 「あのUI、なんて頼めばいい？」を解消するセクション。
  * 完成イメージに使われている型に、正式な名前を与える。
  */
-function PatternGuide({
-  patterns,
-  reasons,
-}: {
-  patterns: UiPattern[];
-  reasons: DesignReason[];
-}) {
-  const categories = Array.from(new Set(patterns.map((p) => p.category)));
+function PatternGuide({ reasons }: { reasons: DesignReason[] }) {
   return (
     <section className="mx-auto mt-12 max-w-3xl">
       <h3 className="text-xl font-bold text-slate-900 sm:text-2xl">「なんか良い」の正体</h3>
@@ -4094,33 +4120,6 @@ function PatternGuide({
           </li>
         ))}
       </ol>
-
-      <h3 className="mt-14 text-xl font-bold text-slate-900 sm:text-2xl">この画面の「部品の名前」</h3>
-      <p className="mt-2 text-sm leading-relaxed text-slate-500">
-        作りたい画面が浮かんでも、名前を知らないと頼めません。上のイメージに使われている型を並べました。
-        この名前で伝えれば、AI にも制作会社にも「それっぽい画面」ではなく必要なものが届きます。
-      </p>
-
-      <div className="mt-6 space-y-6">
-        {categories.map((cat) => (
-          <div key={cat}>
-            <p className="text-xs font-semibold tracking-widest text-ocean-700">{cat}</p>
-            <ul className="mt-2 divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
-              {patterns
-                .filter((p) => p.category === cat)
-                .map((p) => (
-                  <li key={p.en} className="px-4 py-3">
-                    <p className="flex flex-wrap items-baseline gap-x-2">
-                      <span className="font-mono text-sm font-bold text-slate-900">{p.en}</span>
-                      <span className="text-xs text-slate-500">{p.ja}</span>
-                    </p>
-                    <p className="mt-1 text-sm leading-relaxed text-slate-600">{p.desc}</p>
-                  </li>
-                ))}
-            </ul>
-          </div>
-        ))}
-      </div>
 
     </section>
   );
