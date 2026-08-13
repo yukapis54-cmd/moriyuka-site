@@ -3921,14 +3921,32 @@ export default function IdealHpBuilder() {
                 );
               })}
             </div>
+
+            {/* 何が決まったのかを言葉でも残す。相談に持っていくときそのまま使える */}
+            <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-5 border-t border-slate-200 pt-6 sm:grid-cols-3">
+              {QUESTIONS.map((q) => {
+                const opt = q.options.find((o) => o.id === answers[q.key]);
+                const EN: Record<string, string> = {
+                  industry: "INDUSTRY",
+                  goal: "GOAL",
+                  tone: "STYLE",
+                  palette: "COLOR",
+                  layout: "LAYOUT",
+                  hero: "PHOTO",
+                  density: "VOLUME",
+                };
+                return (
+                  <div key={q.key}>
+                    <dt className="text-[10px] font-semibold tracking-[0.2em] text-ocean-600">{EN[q.key]}</dt>
+                    <dd className="mt-1 text-sm font-bold text-slate-900">{opt?.label}</dd>
+                  </div>
+                );
+              })}
+            </dl>
           </div>
 
           <div className="relative mt-8 overflow-hidden rounded-3xl bg-slate-100 p-3 shadow-xl ring-1 ring-slate-200 sm:p-6">
-            {busy && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/70 text-sm text-slate-500">
-                生成中…
-              </div>
-            )}
+            {busy && <BuildingOverlay />}
             <canvas ref={canvasRef} className="block h-auto w-full rounded-xl shadow-2xl" />
             {credits.length > 0 && (
               <p className="mt-3 px-1 text-[11px] leading-relaxed text-slate-500">
@@ -3983,6 +4001,51 @@ export default function IdealHpBuilder() {
           <PatternGuide reasons={reasons} />
         </div>
       )}
+    </div>
+  );
+}
+
+/**
+ * 生成中の見せ方。ぐるぐる回すだけだと「待たされている」になるので、
+ * 何をしているかを順に出して、出来上がりへの期待を作る。
+ */
+function BuildingOverlay() {
+  const STEPS = [
+    "選んだ内容を読み取っています",
+    "配色を組み立てています",
+    "書体を決めています",
+    "レイアウトを設計しています",
+    "写真を選んでいます",
+    "ページを書き出しています",
+  ];
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setI((v) => (v + 1 < STEPS.length ? v + 1 : v)), 900);
+    return () => clearInterval(id);
+    // STEPS は固定なので依存に入れない
+  }, []);
+  return (
+    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-white/85 backdrop-blur-[2px]">
+      <p className="text-sm font-bold text-slate-900">あなたのホームページをデザインしています。</p>
+      <ul className="space-y-1.5">
+        {STEPS.map((s, n) => (
+          <li
+            key={s}
+            className={`flex items-center gap-2 text-xs transition ${
+              n < i ? "text-slate-400" : n === i ? "text-ocean-700" : "text-slate-300"
+            }`}
+          >
+            <span className="w-3">{n < i ? "✓" : n === i ? "▸" : ""}</span>
+            {s}
+          </li>
+        ))}
+      </ul>
+      <div className="h-1 w-44 overflow-hidden rounded-full bg-slate-200">
+        <div
+          className="h-full rounded-full bg-ocean-600 transition-all duration-700"
+          style={{ width: `${((i + 1) / STEPS.length) * 100}%` }}
+        />
+      </div>
     </div>
   );
 }
