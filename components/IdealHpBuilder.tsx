@@ -2532,6 +2532,466 @@ function drawCinema(ctx: CanvasRenderingContext2D, a: Full, siteName: string, fo
   return y + 80;
 }
 
+/* ------------------------- 韓国ミニマル レンダラー ------------------------- */
+function paletteLuma(hex: string): number {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+}
+
+function onPhotoInk(p: Palette): string {
+  return paletteLuma(p.bg) < 0.38 ? p.text : p.bg;
+}
+
+function drawKoreanMinimal(ctx: CanvasRenderingContext2D, a: Full, siteName: string, font: string, serif: string): number {
+  void serif;
+  const p = PALETTES[a.palette];
+  const k = buildCopy(a);
+  const seed = hashString(JSON.stringify(a) + siteName + VARIANT);
+  const pad = 86;
+  const inner = W - pad * 2;
+  const ink = p.text;
+  const muted = p.sub;
+  const rule = rgba(p.text, 0.16);
+  const paper = p.bg;
+  const initial = (siteName.trim()[0] || "K").toUpperCase();
+  const logo = (siteName.trim() || "MINIMAL").toUpperCase();
+
+  ctx.textBaseline = "alphabetic";
+  ctx.textAlign = "left";
+  ctx.fillStyle = paper;
+  ctx.fillRect(0, 0, W, MAXH);
+
+  ctx.save();
+  ctx.fillStyle = ink;
+  ctx.font = `600 13px ${font}`;
+  ctx.letterSpacing = "3px";
+  ctx.fillText("INDEX", pad, 66);
+  ctx.textAlign = "right";
+  ctx.fillText(k.cta, W - pad, 66);
+  ctx.restore();
+  hairline(ctx, pad, 92, inner, rule);
+
+  let y = 150;
+  const heroH = 720;
+  artwork(ctx, pad + inner * 0.34, y, inner * 0.66, heroH, 0, p, a.hero, seed, font, initial);
+  ctx.fillStyle = rgba(p.dark, 0.22);
+  ctx.fillRect(pad + inner * 0.34, y, inner * 0.66, heroH);
+
+  ctx.save();
+  let logoSize = 170;
+  ctx.font = `700 ${logoSize}px ${font}`;
+  while (ctx.measureText(logo).width > W * 0.68 && logoSize > 54) {
+    logoSize -= 4;
+    ctx.font = `700 ${logoSize}px ${font}`;
+  }
+  ctx.fillStyle = ink;
+  ctx.letterSpacing = "0px";
+  ctx.fillText(logo, pad, y + 250);
+  ctx.font = `300 18px ${font}`;
+  ctx.fillStyle = muted;
+  ctx.fillText(k.lead, pad + 6, y + 312);
+  ctx.restore();
+
+  ctx.save();
+  ctx.fillStyle = muted;
+  ctx.font = `400 11px ${font}`;
+  ctx.letterSpacing = "2px";
+  ctx.fillText("01 /", pad, y + heroH + 44);
+  ctx.textAlign = "right";
+  ctx.fillText(k.eyebrow, W - pad, y + heroH + 44);
+  ctx.restore();
+  y += heroH + 148;
+
+  ctx.save();
+  ctx.fillStyle = muted;
+  ctx.font = `400 11px ${font}`;
+  ctx.letterSpacing = "2px";
+  ctx.fillText("02 /", pad, y + 10);
+  ctx.fillStyle = ink;
+  ctx.font = `600 42px ${font}`;
+  ctx.fillText(k.secTitle, pad + 120, y + 28);
+  ctx.restore();
+  y += 82;
+
+  const bigW = inner * 0.58;
+  const smallW = inner - bigW - 34;
+  artwork(ctx, pad, y, bigW, 520, 0, p, "product", seed + 17, font, initial);
+  artwork(ctx, pad + bigW + 34, y + 92, smallW, 250, 0, p, "product", seed + 89, font, initial);
+  artwork(ctx, pad + bigW + 34, y + 372, smallW, 148, 0, p, "scenery", seed + 144, font, initial);
+  y += 592;
+
+  const bandH = 390;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(0, y, W, bandH);
+  ctx.clip();
+  artwork(ctx, 0, y - 56, W, bandH + 112, 0, p, "scenery", seed + 233, font, initial);
+  ctx.fillStyle = rgba(p.dark, 0.45);
+  ctx.fillRect(0, y, W, bandH);
+  ctx.fillStyle = onPhotoInk(p);
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.font = `700 104px ${font}`;
+  ctx.letterSpacing = "12px";
+  ctx.fillText("STILL", W / 2, y + bandH / 2 + 8);
+  ctx.restore();
+  y += bandH + 150;
+
+  ctx.save();
+  ctx.fillStyle = muted;
+  ctx.font = `400 11px ${font}`;
+  ctx.letterSpacing = "2px";
+  ctx.fillText("03 /", pad, y + 8);
+  ctx.restore();
+  const menuX = pad + 150;
+  const menuW = inner - 150;
+  hairline(ctx, menuX, y, menuW, rule);
+  k.items.forEach((it, i) => {
+    const ry = y + 58 + i * 72;
+    ctx.save();
+    ctx.fillStyle = ink;
+    ctx.font = `300 18px ${font}`;
+    ctx.fillText(it.name, menuX, ry);
+    ctx.textAlign = "right";
+    ctx.fillText(it.price, menuX + menuW, ry);
+    ctx.fillStyle = muted;
+    ctx.font = `300 12px ${font}`;
+    ctx.fillText(it.desc, menuX + menuW - 96, ry + 28);
+    ctx.restore();
+    hairline(ctx, menuX, ry + 42, menuW, rule);
+  });
+  y += 58 + k.items.length * 72 + 92;
+
+  ctx.save();
+  ctx.fillStyle = ink;
+  ctx.font = `500 14px ${font}`;
+  ctx.letterSpacing = "4px";
+  ctx.textAlign = "center";
+  ctx.fillText(k.cta, W / 2, y);
+  ctx.restore();
+  return y + 78;
+}
+
+/* ------------------------ エディトリアル上質 レンダラー ------------------------ */
+function drawEditorialFeminine(ctx: CanvasRenderingContext2D, a: Full, siteName: string, font: string, serif: string): number {
+  const p = PALETTES[a.palette];
+  const k = buildCopy(a);
+  const seed = hashString(JSON.stringify(a) + siteName + VARIANT);
+  const pad = 92;
+  const inner = W - pad * 2;
+  const ink = p.text;
+  const muted = p.sub;
+  const rule = rgba(p.text, 0.14);
+  const soft = mix(p.bg, p.soft, 0.42);
+  const initial = (siteName.trim()[0] || "E").toUpperCase();
+
+  ctx.textBaseline = "alphabetic";
+  ctx.textAlign = "left";
+  ctx.fillStyle = p.bg;
+  ctx.fillRect(0, 0, W, MAXH);
+
+  ctx.save();
+  ctx.fillStyle = muted;
+  ctx.font = `400 11px ${font}`;
+  ctx.letterSpacing = "5px";
+  ctx.fillText(k.eyebrow, pad, 72);
+  ctx.textAlign = "right";
+  ctx.fillText((siteName.trim() || "EDITORIAL").toUpperCase(), W - pad, 72);
+  ctx.restore();
+
+  let y = 150;
+  ctx.save();
+  ctx.fillStyle = ink;
+  ctx.font = `300 72px ${serif}`;
+  ctx.letterSpacing = "1px";
+  ctx.fillText(k.h1[0], pad, y + 90);
+  ctx.fillText(k.h1[1], pad, y + 176);
+  ctx.font = `italic 300 18px ${serif}`;
+  ctx.fillStyle = p.primary;
+  ctx.fillText(k.lead, pad + 18, y + 240);
+  ctx.restore();
+  artwork(ctx, W - pad - 430, y, 430, 560, 0, p, a.hero, seed, font, initial);
+  artwork(ctx, W - pad - 640, y + 340, 300, 260, 0, p, "product", seed + 29, font, initial);
+  y += 720;
+
+  const feature = (idx: number, yy: number, flip: boolean) => {
+    const imgW = flip ? 470 : 410;
+    const imgH = flip ? 380 : 470;
+    const imgX = flip ? pad : W - pad - imgW;
+    const tx = flip ? W - pad - 430 : pad;
+    hairline(ctx, pad, yy, inner, rule);
+    ctx.save();
+    ctx.fillStyle = muted;
+    ctx.font = `400 12px ${font}`;
+    ctx.letterSpacing = "3px";
+    ctx.fillText(String(idx).padStart(2, "0") + " /", tx, yy + 44);
+    ctx.fillStyle = ink;
+    ctx.font = `300 44px ${serif}`;
+    ctx.letterSpacing = "1px";
+    ctx.fillText(idx === 1 ? k.aboutTitle : k.secTitle, tx, yy + 112);
+    ctx.restore();
+    para(ctx, idx === 1 ? k.aboutBody : k.secLead, tx, yy + 158, 390, 15, 31, muted, font, 300, "left", 4);
+    artwork(ctx, imgX, yy + 30, imgW, imgH, 0, p, idx === 1 ? "person" : "scenery", seed + idx * 101, font, initial);
+    ctx.save();
+    ctx.fillStyle = soft;
+    ctx.fillRect(imgX + (flip ? imgW - 118 : -42), yy + imgH - 40, 160, 112);
+    ctx.font = `italic 300 17px ${serif}`;
+    ctx.fillStyle = p.primary;
+    ctx.fillText(k.quote, imgX + (flip ? imgW - 96 : -20), yy + imgH + 16);
+    ctx.restore();
+    return yy + imgH + 150;
+  };
+
+  y = feature(1, y, false);
+  y = feature(2, y, true);
+
+  ctx.save();
+  ctx.fillStyle = muted;
+  ctx.font = `400 11px ${font}`;
+  ctx.letterSpacing = "4px";
+  ctx.fillText(k.secLabel, pad, y);
+  ctx.restore();
+  y += 50;
+
+  const items = k.items.length >= 4 ? k.items.slice(0, 4) : [...k.items, k.items[0]].slice(0, 4);
+  const frames = [
+    { x: pad, y: y + 70, w: 220, h: 280 },
+    { x: pad + 252, y, w: 270, h: 350 },
+    { x: pad + 554, y: y + 42, w: 210, h: 270 },
+    { x: pad + 798, y: y + 104, w: 218, h: 250 },
+  ];
+  frames.forEach((fr, i) => {
+    artwork(ctx, fr.x, fr.y, fr.w, fr.h, 0, p, "product", seed + i * 67, font, initial);
+    ctx.save();
+    ctx.fillStyle = muted;
+    ctx.font = `400 11px ${font}`;
+    ctx.letterSpacing = "3px";
+    ctx.fillText(String(i + 1).padStart(2, "0") + " /", fr.x, fr.y + fr.h + 36);
+    ctx.fillStyle = ink;
+    ctx.font = `300 15px ${serif}`;
+    ctx.fillText(items[i].name, fr.x + 58, fr.y + fr.h + 36);
+    ctx.font = `300 13px ${font}`;
+    ctx.fillText(items[i].price, fr.x + 58, fr.y + fr.h + 62);
+    ctx.restore();
+  });
+  y += 520;
+
+  hairline(ctx, pad, y, inner, rule);
+  ctx.save();
+  ctx.fillStyle = ink;
+  ctx.font = `300 42px ${serif}`;
+  ctx.letterSpacing = "4px";
+  ctx.fillText("JOURNAL", pad, y + 76);
+  ctx.restore();
+  const entries = [k.aboutTitle, k.bandTitle, k.quote];
+  entries.forEach((title, i) => {
+    const ry = y + 134 + i * 76;
+    ctx.save();
+    ctx.fillStyle = muted;
+    ctx.font = `400 12px ${font}`;
+    ctx.letterSpacing = "2px";
+    ctx.fillText(`2026.0${i + 6}.0${i + 2}`, pad, ry);
+    ctx.fillStyle = ink;
+    ctx.font = `300 21px ${serif}`;
+    ctx.fillText(title, pad + 180, ry);
+    ctx.restore();
+    hairline(ctx, pad + 180, ry + 28, inner - 180, rule);
+  });
+  y += 390;
+
+  ctx.save();
+  ctx.fillStyle = ink;
+  ctx.font = `300 18px ${serif}`;
+  ctx.textAlign = "center";
+  ctx.fillText(k.cta, W / 2, y);
+  ctx.restore();
+  return y + 84;
+}
+
+/* -------------------------- スクラップブック Pop -------------------------- */
+function tapePhoto(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  angle: number,
+  p: Palette,
+  kind: string,
+  seed: number,
+  font: string,
+  initial: string,
+) {
+  ctx.save();
+  ctx.translate(x + w / 2, y + h / 2);
+  ctx.rotate(angle);
+  ctx.translate(-w / 2, -h / 2);
+  box(ctx, -10, -10, w + 20, h + 20, 24, mix(p.bg, p.soft, 0.45));
+  artwork(ctx, 0, 0, w, h, 20, p, kind, seed, font, initial);
+  box(ctx, w * 0.26, -22, w * 0.48, 32, 8, rgba(p.accent, 0.74));
+  ctx.restore();
+}
+
+function scrapbookDoodles(ctx: CanvasRenderingContext2D, p: Palette, seed: number, x: number, y: number, w: number, h: number, font: string) {
+  const rand = mulberry(seed);
+  ctx.save();
+  ctx.strokeStyle = rgba(p.primary, 0.46);
+  ctx.fillStyle = rgba(p.accent, 0.5);
+  ctx.lineWidth = 2;
+  for (let i = 0; i < 18; i++) {
+    const px = x + rand() * w;
+    const py = y + rand() * h;
+    if (i % 3 === 0) {
+      ctx.beginPath();
+      ctx.arc(px, py, 4 + rand() * 8, 0, Math.PI * 2);
+      ctx.stroke();
+    } else if (i % 3 === 1) {
+      ctx.beginPath();
+      for (let j = 0; j < 5; j++) {
+        const xx = px + j * 12;
+        const yy = py + Math.sin(j * 1.7) * 6;
+        if (j === 0) ctx.moveTo(xx, yy);
+        else ctx.lineTo(xx, yy);
+      }
+      ctx.stroke();
+    } else {
+      ctx.font = `700 22px ${font}`;
+      ctx.fillText("♡", px, py);
+    }
+  }
+  ctx.restore();
+}
+
+function drawScrapbookPop(ctx: CanvasRenderingContext2D, a: Full, siteName: string, font: string, serif: string): number {
+  void serif;
+  const p = PALETTES[a.palette];
+  const k = buildCopy(a);
+  const seed = hashString(JSON.stringify(a) + siteName + VARIANT);
+  const pad = 68;
+  const inner = W - pad * 2;
+  const paper = mix(p.bg, p.soft, 0.72);
+  const card = mix(p.bg, p.soft, 0.28);
+  const ink = p.text;
+  const initial = (siteName.trim()[0] || "P").toUpperCase();
+
+  ctx.textBaseline = "alphabetic";
+  ctx.textAlign = "left";
+  ctx.fillStyle = paper;
+  ctx.fillRect(0, 0, W, MAXH);
+  scrapbookDoodles(ctx, p, seed + 5, 24, 20, W - 48, 980, font);
+
+  let y = 72;
+  ctx.save();
+  ctx.fillStyle = ink;
+  ctx.letterSpacing = "0px";
+  // 見出しの長さは業種で変わる。固定サイズだと右端からはみ出して切れるので、
+  // 収まるところまで縮めてから置く（傾ける分だけ余裕を見る）
+  const h1Max = W - pad * 2 - 360;
+  let h1Size = 108;
+  ctx.font = `900 ${h1Size}px ${font}`;
+  while (
+    h1Size > 44 &&
+    Math.max(ctx.measureText(k.h1[0]).width, ctx.measureText(k.h1[1]).width) > h1Max
+  ) {
+    h1Size -= 4;
+    ctx.font = `900 ${h1Size}px ${font}`;
+  }
+  ctx.translate(pad, y + 150);
+  ctx.rotate(-0.035);
+  ctx.fillText(k.h1[0], 0, 0);
+  ctx.fillText(k.h1[1], 0, h1Size * 1.04);
+  ctx.restore();
+  tapePhoto(ctx, W - pad - 390, y + 48, 360, 420, 0.055, p, a.hero, seed + 11, font, initial);
+  tapePhoto(ctx, pad + 48, y + 330, 260, 210, -0.065, p, "product", seed + 31, font, initial);
+  ctx.save();
+  box(ctx, pad + 338, y + 400, 290, 74, 37, p.primary);
+  ctx.fillStyle = onPhotoInk(p);
+  ctx.font = `800 18px ${font}`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(k.cta, pad + 483, y + 438);
+  ctx.restore();
+  y += 650;
+
+  const catW = inner / 4;
+  [a.hero, "product", "person", "scenery"].forEach((kind, i) => {
+    const cx = pad + catW * i + catW / 2;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, y + 88, 78, 0, Math.PI * 2);
+    ctx.clip();
+    artwork(ctx, cx - 78, y + 10, 156, 156, 0, p, kind, seed + i * 59, font, initial);
+    ctx.restore();
+    ctx.save();
+    ctx.strokeStyle = p.primary;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, y + 88, 84, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = ink;
+    ctx.font = `800 13px ${font}`;
+    ctx.textAlign = "center";
+    ctx.fillText(["MAIN", "ITEM", "PEOPLE", "PLACE"][i], cx, y + 202);
+    ctx.restore();
+  });
+  y += 292;
+
+  ctx.save();
+  ctx.fillStyle = ink;
+  ctx.font = `900 58px ${font}`;
+  ctx.translate(pad, y + 46);
+  ctx.rotate(-0.025);
+  ctx.fillText(k.secTitle, 0, 0);
+  ctx.restore();
+  y += 92;
+
+  const items = k.items;
+  const cw = (inner - 42) / 3;
+  items.forEach((it, i) => {
+    const x = pad + i * (cw + 21);
+    box(ctx, x, y + (i % 2) * 34, cw, 424, 34, card);
+    artwork(ctx, x + 18, y + 18 + (i % 2) * 34, cw - 36, 248, 28, p, "product", seed + i * 93, font, initial);
+    ctx.save();
+    ctx.fillStyle = p.accent;
+    ctx.beginPath();
+    ctx.arc(x + cw - 44, y + 48 + (i % 2) * 34, 26, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = onPhotoInk(p);
+    ctx.font = `900 13px ${font}`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(`0${i + 1}`, x + cw - 44, y + 48 + (i % 2) * 34);
+    ctx.restore();
+    ctx.save();
+    ctx.fillStyle = ink;
+    ctx.font = `800 19px ${font}`;
+    ctx.fillText(it.name, x + 24, y + 308 + (i % 2) * 34);
+    ctx.font = `700 15px ${font}`;
+    ctx.fillText(it.price, x + 24, y + 344 + (i % 2) * 34);
+    ctx.restore();
+    para(ctx, it.desc, x + 24, y + 374 + (i % 2) * 34, cw - 48, 12, 20, p.sub, font, 500, "left", 2);
+  });
+  y += 528;
+  scrapbookDoodles(ctx, p, seed + 99, 28, y - 90, W - 56, 260, font);
+
+  ctx.save();
+  box(ctx, pad, y, inner, 184, 42, card);
+  ctx.fillStyle = ink;
+  ctx.font = `900 34px ${font}`;
+  ctx.fillText(k.bandTitle, pad + 42, y + 68);
+  para(ctx, k.bandBody, pad + 42, y + 104, inner * 0.52, 14, 24, p.sub, font, 500, "left", 2);
+  box(ctx, W - pad - 270, y + 58, 220, 62, 31, p.primary);
+  ctx.fillStyle = onPhotoInk(p);
+  ctx.font = `800 17px ${font}`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(k.cta, W - pad - 160, y + 90);
+  ctx.restore();
+  return y + 260;
+}
+
 /* ------------------------------ プロ仕様レンダラー ----------------------------- */
 
 /**
@@ -2616,6 +3076,9 @@ function drawSite(ctx: CanvasRenderingContext2D, a: Full, siteName: string, font
   if (a.tone === "patisserie") return drawPatisserie(ctx, a, siteName, serif);
   if (a.tone === "popwa") return drawPopWa(ctx, a, siteName, font);
   if (a.tone === "cinema") return drawCinema(ctx, a, siteName, font, serif);
+  if (a.tone === "modern") return drawKoreanMinimal(ctx, a, siteName, font, serif);
+  if (a.tone === "premium") return drawEditorialFeminine(ctx, a, siteName, font, serif);
+  if (a.tone === "pop") return drawScrapbookPop(ctx, a, siteName, font, serif);
   const p = PALETTES[a.palette];
   const t = TONES[a.tone];
   const k = buildCopy(a);
