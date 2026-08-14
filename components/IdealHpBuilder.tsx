@@ -4143,6 +4143,8 @@ export default function IdealHpBuilder() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const serifRef = useRef<HTMLSpanElement | null>(null);
 
+  /** 完成イメージをスマホ幅で見るかどうか。実際の見え方の確認に使う */
+  const [narrow, setNarrow] = useState(false);
   const [photoVersion, setPhotoVersion] = useState(0);
   const [variant, setVariant] = useState(0);
   const previewRef = useRef<HTMLCanvasElement | null>(null);
@@ -4156,6 +4158,28 @@ export default function IdealHpBuilder() {
     () => reasonsFor(merged, PALETTES[merged.palette]?.name ?? ""),
     [merged],
   );
+
+  /** 「AIが適当に作った絵」ではなく「自分の回答から設計されたもの」と分かるようにする */
+  const whyText = useMemo(() => {
+    const label = (key: EngineKey | ExtraKey) =>
+      QUESTIONS.find((q) => q.key === key)?.options.find((o) => o.id === answers[key])?.label ?? "";
+    const targets = picked(answers, "target")
+      .map((id) => QUESTIONS.find((q) => q.key === "target")?.options.find((o) => o.id === id)?.label)
+      .filter(Boolean);
+    const feats = picked(answers, "features")
+      .map((id) => QUESTIONS.find((q) => q.key === "features")?.options.find((o) => o.id === id)?.label)
+      .filter(Boolean);
+    const parts = [
+      `あなたは空気感に「${label("tone")}」、色に「${label("palette")}」を選びました。`,
+      `そのため、${label("layout")}の組み方をベースに、${label("hero")}を主役にした構成にしています。`,
+      label("typography") ? `見出しは「${label("typography")}」で組み、` : "",
+      label("photomood") ? `写真は「${label("photomood")}」の方向で選んでいます。` : "",
+      targets.length ? `読み手として「${targets.join("・")}」を想定し、` : "",
+      `文章量は「${label("density")}」にしてページの丈を決めました。`,
+      feats.length ? `ご相談時には「${feats.join("・")}」の実装も前提としてお伝えします。` : "",
+    ];
+    return parts.filter(Boolean).join("");
+  }, [answers]);
   const render = useCallback(() => {
     VARIANT = variant;
     const visible = canvasRef.current;
@@ -4526,7 +4550,22 @@ export default function IdealHpBuilder() {
 
           <div className="relative mt-8 overflow-hidden rounded-3xl bg-slate-100 p-3 shadow-xl ring-1 ring-slate-200 sm:p-6">
             {busy && <BuildingOverlay />}
-            <canvas ref={canvasRef} className="block h-auto w-full rounded-xl shadow-2xl" />
+            <div className="mb-3 flex items-center justify-end gap-1">
+              {([["パソコン", false], ["スマホ", true]] as const).map(([label, v]) => (
+                <button
+                  key={label}
+                  onClick={() => setNarrow(v)}
+                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                    narrow === v ? "bg-slate-900 text-white" : "bg-white text-slate-600 hover:bg-slate-50"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <div className={narrow ? "mx-auto max-w-[390px]" : ""}>
+              <canvas ref={canvasRef} className="block h-auto w-full rounded-xl shadow-2xl" />
+            </div>
             {credits.length > 0 && (
               <p className="mt-3 px-1 text-[11px] leading-relaxed text-slate-500">
                 Photos:{" "}
@@ -4577,7 +4616,7 @@ export default function IdealHpBuilder() {
             )}
           </div>
 
-          <PatternGuide reasons={reasons} />
+          <PatternGuide reasons={reasons} why={whyText} />
 
           {/* 診断結果をそのまま渡す。同じことを二度書かせない */}
           <div className="mx-auto mt-16 max-w-3xl">
@@ -4715,10 +4754,15 @@ function FlowChart({
  * 「あのUI、なんて頼めばいい？」を解消するセクション。
  * 完成イメージに使われている型に、正式な名前を与える。
  */
-function PatternGuide({ reasons }: { reasons: DesignReason[] }) {
+function PatternGuide({ reasons, why }: { reasons: DesignReason[]; why: string }) {
   return (
     <section className="mx-auto mt-12 max-w-3xl">
-      <h3 className="text-xl font-bold text-slate-900 sm:text-2xl">「なんか良い」の正体</h3>
+      <h3 className="text-xl font-bold text-slate-900 sm:text-2xl">なぜ、このデザインになったのか</h3>
+      <p className="mt-3 rounded-2xl bg-slate-50 p-5 text-sm leading-relaxed text-slate-700 ring-1 ring-slate-200">
+        {why}
+      </p>
+
+      <h3 className="mt-14 text-xl font-bold text-slate-900 sm:text-2xl">「なんか良い」の正体</h3>
       <p className="mt-2 text-sm leading-relaxed text-slate-500">
         上のイメージが良く見えるとしたら、それはセンスではなく理由があります。種明かしします。
         <br />
