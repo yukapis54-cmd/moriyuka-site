@@ -1213,7 +1213,7 @@ function archClip(ctx: CanvasRenderingContext2D, x: number, y: number, w: number
   ctx.closePath();
 }
 
-/** はちとワルツ風のループ罫 */
+/** 曲線のループ罫 */
 function loopBorder(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -1281,7 +1281,7 @@ function drawWa(ctx: CanvasRenderingContext2D, a: Full, siteName: string, font: 
   ctx.fillStyle = sub;
   ctx.fillText("2026.07.25", cx0 + 54, y);
   ctx.fillStyle = ink;
-  ctx.fillText("2026年8月　休業日について", cx0 + 176, y);
+  ctx.fillText(k.secTitle, cx0 + 176, y);
   y += 64;
 
   // アーチ抜きヒーロー
@@ -1308,7 +1308,7 @@ function drawWa(ctx: CanvasRenderingContext2D, a: Full, siteName: string, font: 
   const indc = INDUSTRY_COPY[a.industry];
   const names = indc
     ? [...indc.items.map((i) => i.name), indc.items[0].name]
-    : ["丹波篠山産 新栗蒸し羊羹", "黒糖ようかん", "塩羊羹", "栗大納言羊羹"];
+    : k.items.map((it) => it.name);
   const prices = indc
     ? [...indc.items.map((i) => i.price), indc.items[0].price]
     : ["¥3,510", "¥720", "¥1,700", "¥1,890"];
@@ -1350,7 +1350,8 @@ function drawWa(ctx: CanvasRenderingContext2D, a: Full, siteName: string, font: 
   asanoha(ctx, tx0, y, tw, sh, "rgba(0,0,0,0.055)");
   vtext(ctx, `${siteName.trim() || "扇屋"}の歴史 一`, tx0 + tw - 66, y + 40, 26, ink, font, 500, 32);
   const cols = a.density === "light" ? 3 : a.density === "balanced" ? 5 : 7;
-  const bodyStr = "創業は大正十五年。街道沿いの湯本で茶屋のような商いをしておりました。訪れる人々に軽食を提供する店として営業を開始し、温泉地の発展に合わせて商いを広げてきました。";
+  // 業種に応じた文章を使う。特定の店の沿革を書かない
+  const bodyStr = k.aboutBody;
   for (let i = 0; i < cols; i++) {
     const cxp = tx0 + tw - 130 - i * 30;
     const from = i * 13;
@@ -1432,11 +1433,11 @@ function drawPatisserie(ctx: CanvasRenderingContext2D, a: Full, siteName: string
   ctx.fillStyle = gold;
   ctx.font = `400 12px ${font}`;
   ctx.letterSpacing = "6px";
-  ctx.fillText("SENDAI", 60, y);
+  ctx.fillText(k.secLabel, 60, y);
   ctx.textAlign = "center";
   ctx.fillText((siteName.trim() || "PATISSERIE").toUpperCase(), W / 2, y);
   ctx.textAlign = "right";
-  ctx.fillText("AKIU", W - 60, y);
+  ctx.fillText("LOCAL", W - 60, y);
   ctx.restore();
 
   // アーチ天面のヒーロー
@@ -1463,7 +1464,7 @@ function drawPatisserie(ctx: CanvasRenderingContext2D, a: Full, siteName: string
   });
 
   // ヒーロー右：大きな縦組ロゴ（2列）
-  const logo = Array.from(siteName.trim() || "はちとワルツ");
+  const logo = Array.from(siteName.trim() || "YOUR SITE");
   const half = Math.ceil(logo.length / 2);
   vtext(ctx, logo.slice(0, half).join(""), W - 90, y + 250, 62, "#2c2118", font, 400, 84);
   vtext(ctx, logo.slice(half).join(""), W - 200, y + 300, 62, "#2c2118", font, 400, 84);
@@ -2300,7 +2301,7 @@ function drawPopWa(ctx: CanvasRenderingContext2D, a: Full, siteName: string, fon
   ctx.fillText(k.lead, W / 2, 96);
   ctx.restore();
 
-  const rawName = siteName.trim() || "SEAVEGE";
+  const rawName = siteName.trim() || "YOUR SITE";
   const logo = rawName.length <= 10 ? rawName : rawName.split(/\s+/)[0] || rawName.slice(0, 10);
   const logoSize = fatText(ctx, logo, W / 2, 200, W * 0.82, teal, font, 1.2);
 
@@ -2560,6 +2561,15 @@ function paletteLuma(hex: string): number {
 
 function onPhotoInk(p: Palette): string {
   return paletteLuma(p.bg) < 0.38 ? p.text : p.bg;
+}
+
+/**
+ * 任意の背景色の上で読める文字色を返す。
+ * 白を直書きすると、黒×白（noir）のように primary が白の配色で
+ * 白地に白文字になって消えるため、必ずこれを通す。
+ */
+function contrastText(bg: string): string {
+  return paletteLuma(bg) < 0.55 ? "#ffffff" : "#111111";
 }
 
 function drawKoreanMinimal(ctx: CanvasRenderingContext2D, a: Full, siteName: string, font: string, serif: string): number {
@@ -3103,7 +3113,7 @@ function drawScrapbookPop(ctx: CanvasRenderingContext2D, a: Full, siteName: stri
   tapePhoto(ctx, pad + 48, y + 330, 260, 210, -0.065, p, "product", seed + 31, font, initial);
   ctx.save();
   box(ctx, pad + 338, y + 400, 290, 74, 37, p.primary);
-  ctx.fillStyle = onPhotoInk(p);
+  ctx.fillStyle = contrastText(p.primary);
   ctx.font = `800 18px ${font}`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
@@ -3154,7 +3164,8 @@ function drawScrapbookPop(ctx: CanvasRenderingContext2D, a: Full, siteName: stri
     ctx.beginPath();
     ctx.arc(x + cw - 44, y + 48 + (i % 2) * 34, 26, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = onPhotoInk(p);
+    // 文字が乗るのは accent の上。背景 p.bg 基準で決めると白地に白文字になる
+    ctx.fillStyle = contrastText(p.accent);
     ctx.font = `900 13px ${font}`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -3179,7 +3190,7 @@ function drawScrapbookPop(ctx: CanvasRenderingContext2D, a: Full, siteName: stri
   ctx.fillText(k.bandTitle, pad + 42, y + 68);
   para(ctx, k.bandBody, pad + 42, y + 104, inner * 0.52, 14, 24, p.sub, font, 500, "left", 2);
   box(ctx, W - pad - 270, y + 58, 220, 62, 31, p.primary);
-  ctx.fillStyle = onPhotoInk(p);
+  ctx.fillStyle = contrastText(p.primary);
   ctx.font = `800 17px ${font}`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
@@ -3410,7 +3421,7 @@ function drawSite(ctx: CanvasRenderingContext2D, a: Full, siteName: string, font
   const solidBtn2 = (x: number, yy: number, label: string, w = 132, h = 38) => {
     box(ctx, x, yy, w, h, t.radius ? h / 2 : 2, p.primaryDeep);
     ctx.save();
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = contrastText(p.primaryDeep);
     ctx.font = `600 12px ${font}`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -3472,7 +3483,7 @@ function drawSite(ctx: CanvasRenderingContext2D, a: Full, siteName: string, font
       // 価格バッジを写真に重ねる
       const bw2 = 132;
       const bh2 = 56;
-      box(ctx, ix + iw - bw2 - 20, iy + 20, bw2, bh2, t.radius ? bh2 / 2 : 0, "#ffffff");
+      box(ctx, ix + iw - bw2 - 20, iy + 20, bw2, bh2, t.radius ? bh2 / 2 : 0, p.bg);
       ctx.save();
       ctx.fillStyle = p.text;
       ctx.font = `700 20px ${font}`;
