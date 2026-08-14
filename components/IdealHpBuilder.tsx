@@ -73,7 +73,7 @@ const QUESTIONS: Question[] = [
       { id: "premium", label: "上質・落ち着き", desc: "細い明朝／静かな配色" },
       { id: "pop", label: "元気・ポップ", desc: "コントラスト強め／密度高め" },
       { id: "wamodern", label: "和モダン・老舗", desc: "縦書き／アーチ写真／サイドレール" },
-      { id: "patisserie", label: "洋菓子店・アーチ", desc: "生成り＋金／中央カラム／縦組ロゴ" },
+      { id: "patisserie", label: "やわらかい・曲線", desc: "アーチの切り抜き／生成り＋金／中央に寄せる" },
       { id: "popwa", label: "ポップ和・極太", desc: "極太ロゴ／ブロブ写真／吹き出し／日英併記" },
       { id: "cinema", label: "シネマ・ダーク", desc: "黒背景／明朝の一文／全面映像／余白最大" },
     ],
@@ -1392,7 +1392,23 @@ function drawWa(ctx: CanvasRenderingContext2D, a: Full, siteName: string, font: 
   return y;
 }
 
-/* --------------------------- 洋菓子店レンダラー --------------------------- */
+/** 長い一文を、指定の文字数あたりで句読点優先に折り返す */
+function splitBy(text: string, per: number): string[] {
+  const out: string[] = [];
+  let rest = (text ?? "").trim();
+  while (rest.length > per) {
+    // 読点・句点で切れるならそこで切る。無ければ文字数で切る
+    const window = rest.slice(0, per + 6);
+    const at = Math.max(window.lastIndexOf("、"), window.lastIndexOf("。"));
+    const cut = at >= per - 8 ? at + 1 : per;
+    out.push(rest.slice(0, cut));
+    rest = rest.slice(cut).trim();
+  }
+  if (rest) out.push(rest);
+  return out;
+}
+
+/* --------------------------- やわらかい・曲線レンダラー --------------------------- */
 function drawPatisserie(ctx: CanvasRenderingContext2D, a: Full, siteName: string, font: string): number {
   const p = PALETTES[a.palette];
   const k = buildCopy(a);
@@ -1434,8 +1450,8 @@ function drawPatisserie(ctx: CanvasRenderingContext2D, a: Full, siteName: string
   ctx.fillRect(0, y, W, hh);
   ctx.restore();
 
-  // ヒーロー内：タグ３枚
-  const tags = ["宮城・仙台の奥座敷", "秋保温泉にある", "カステラサンドの店"];
+  // ヒーロー内：タグ３枚。回答から作った文言を使う（特定の店の紹介文を書かない）
+  const tags = [k.secLabel, k.stats[0]?.[1] ?? "", k.secTitle].filter(Boolean).slice(0, 3);
   tags.forEach((tg, i) => {
     const tw2 = 148;
     const ty = y + 300 + i * 36;
@@ -1487,10 +1503,12 @@ function drawPatisserie(ctx: CanvasRenderingContext2D, a: Full, siteName: string
   loopBorder(ctx, colX - 22, secTop - 20, colH, gold, true, 26);
   loopBorder(ctx, colX + colW + 22, secTop - 20, colH, gold, true, 26);
 
+  // 業種ごとの文言から組み立てる。ここを固定文にすると、
+  // 水産業を選んでも菓子屋の紹介文が出てしまう
   const paras = [
-    ["秋保の工房には、", "今日も甘くやさしい香りが満ちている。"],
-    ["はちみつの配合を工夫して、", "しっとり感を引き出したこだわりの生地。", "色とりどりの餡を挟んだら", "カステラサンドのできあがり。"],
-    ["ひとくち目は、カステラを。", "ふたくち目は、餡と一緒に。", "さんくち目は、好きな飲み物と。"],
+    [k.h1[0], k.h1[1]].filter(Boolean),
+    splitBy(k.aboutBody, 22).slice(0, 4),
+    splitBy(k.lead, 20).slice(0, 3),
   ];
   const shown = a.density === "light" ? paras.slice(0, 2) : paras;
   ctx.save();
