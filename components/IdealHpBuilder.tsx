@@ -1261,7 +1261,7 @@ function drawWa(ctx: CanvasRenderingContext2D, a: Full, siteName: string, font: 
 
   // 右：家紋＋縦組ロゴ
   fanMark(ctx, W - 56, 44, 26, ink);
-  const nameChars = Array.from(siteName.trim() || "扇屋");
+  const nameChars = Array.from(siteName.trim() || "屋号");
   if (nameChars.length >= 4) {
     // 「那須 / 扇屋」のように冠部分と屋号を分けて組む
     const cut = nameChars.length - 2;
@@ -1316,7 +1316,7 @@ function drawWa(ctx: CanvasRenderingContext2D, a: Full, siteName: string, font: 
     const x = cx0 + 30 + i * (iw + gap);
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(x, y, iw, iw);
-    artwork(ctx, x, y, iw, iw, 0, p, "product", seed + i * 331, font, "菓");
+    artwork(ctx, x, y, iw, iw, 0, p, "product", seed + i * 331, font, (siteName.trim()[0] ?? "S").toUpperCase());
     // 縦書き商品名：長い名前は画像内に収まる位置から始める
     // 縦書き商品名は画像の上に置く（参考サイトと同じ組み方）
     const nm = Array.from(names[i]).filter((ch) => ch !== " ").slice(0, 9);
@@ -1348,7 +1348,7 @@ function drawWa(ctx: CanvasRenderingContext2D, a: Full, siteName: string, font: 
   const tx0 = cx0 - 20 + phw;
   const tw = W - railR - tx0;
   asanoha(ctx, tx0, y, tw, sh, "rgba(0,0,0,0.055)");
-  vtext(ctx, `${siteName.trim() || "扇屋"}の歴史 一`, tx0 + tw - 66, y + 40, 26, ink, font, 500, 32);
+  vtext(ctx, `${siteName.trim() || "屋号"}の歴史 一`, tx0 + tw - 66, y + 40, 26, ink, font, 500, 32);
   const cols = a.density === "light" ? 3 : a.density === "balanced" ? 5 : 7;
   // 業種に応じた文章を使う。特定の店の沿革を書かない
   const bodyStr = k.aboutBody;
@@ -2313,10 +2313,17 @@ function drawPopWa(ctx: CanvasRenderingContext2D, a: Full, siteName: string, fon
   artwork(ctx, 60, photoTop - 40, W - 120, photoH + 80, 0, p, "person", seed, font, logo[0] ?? "S");
   ctx.restore();
 
-  vtext(ctx, "ご予約はこちらから。ぜひ登録お願いします！", W - 40, photoTop - 40, 13, teal, font, 600, 17);
-  vtext(ctx, "We accept online bookings. Follow us!", W - 66, photoTop - 40, 12, teal, font, 500, 15);
+  // 目的によって呼びかけは変わる。予約固定にしない
+  vtext(ctx, k.ctaNote, W - 40, photoTop - 40, 13, teal, font, 600, 17);
+  vtext(ctx, "Please take your time and have a look.", W - 66, photoTop - 40, 12, teal, font, 500, 15);
 
-  const cols = [k.secTitle.slice(0, 4), "本日開店", "地産地消", "笑門来福"];
+  // 業種に関係なく同じ四字が並んでいたので、回答から作った語に置き換える
+  const cols = [
+    k.secTitle.slice(0, 4),
+    k.bandTitle.slice(0, 4),
+    k.aboutTitle.slice(0, 4),
+    k.stats[0]?.[1]?.slice(0, 4) ?? k.h1[0].slice(0, 4),
+  ];
   cols.forEach((c, i) => {
     vtext(ctx, c, W - 150 - i * 74, photoTop + photoH * 0.52, 44, teal, font, 900, 52);
   });
@@ -2350,7 +2357,7 @@ function drawPopWa(ctx: CanvasRenderingContext2D, a: Full, siteName: string, fon
   ctx.fillText(k0.lead, pad + 46, y + 116);
   ctx.font = `400 13px ${font}`;
   ctx.fillStyle = rgba(teal, 0.75);
-  ctx.fillText("From our shop. All handmade, every single day.", pad + 46, y + 148);
+  ctx.fillText("Selected with care, every single day.", pad + 46, y + 148);
   ctx.restore();
   y += 250;
 
@@ -2364,7 +2371,7 @@ function drawPopWa(ctx: CanvasRenderingContext2D, a: Full, siteName: string, fon
   ty += para(ctx, k0.aboutBody, pad + half + 60, ty, half, 15, 30, teal, font, 500, "left", 5) + 22;
   para(
     ctx,
-    "We keep the batch small so that everything reaches you at its best. Please drop by anytime.",
+    "We keep things small so that everything reaches you at its best.",
     pad + half + 60,
     ty,
     half,
@@ -4092,13 +4099,20 @@ function drawThumb(ctx: CanvasRenderingContext2D, a: Full, w: number, h: number,
   const pad = w * 0.07;
   const inner = w - pad * 2;
   const rows = a.density === "light" ? 2 : a.density === "balanced" ? 3 : 4;
+  const thumbLines = (x: number, yy: number, ww: number, n: number, lh: number, col = p.line, weight = 3.5) => {
+    ctx.fillStyle = col;
+    for (let i = 0; i < n; i++) {
+      rr(ctx, x, yy + i * lh, i === n - 1 ? ww * 0.58 : ww, weight, weight / 2);
+      ctx.fill();
+    }
+  };
 
   ctx.clearRect(0, 0, w, h);
 
   if (a.tone === "wamodern") {
-    ctx.fillStyle = "#ebebeb";
+    ctx.fillStyle = p.bg;
     ctx.fillRect(0, 0, w, h);
-    ctx.strokeStyle = "#1c1c1c";
+    ctx.strokeStyle = p.text;
     ctx.lineWidth = 1;
     for (let i = 0; i < 3; i++) {
       ctx.beginPath();
@@ -4106,60 +4120,163 @@ function drawThumb(ctx: CanvasRenderingContext2D, a: Full, w: number, h: number,
       ctx.lineTo(10 + i * 4, 22);
       ctx.stroke();
     }
-    fanMark(ctx, w - 16, 10, 8, "#1c1c1c");
-    vtext(ctx, "扇屋", w - 16, 24, 9, "#1c1c1c", font, 500, 11);
-    ctx.fillStyle = "#6d6d6d";
+    fanMark(ctx, w - 16, 10, 8, p.text);
+    ctx.fillStyle = p.sub;
     rr(ctx, 34, 30, 90, 3, 1.5);
     ctx.fill();
-    ctx.save();
-    ctx.beginPath();
-    ctx.ellipse(w * 0.42, 44 + h * 0.62, w * 1.02, h * 0.62, 0, 0, Math.PI * 2);
-    ctx.clip();
-    artwork(ctx, 0, 44, w, h * 0.42, 0, p, a.hero, seed, font, "扇");
-    ctx.restore();
-    const gy = 44 + h * 0.42 + 22;
-    const iw2 = (w - 60) / 4 - 5;
-    for (let i = 0; i < 4; i++) {
-      const x = 30 + i * (iw2 + 5);
-      artwork(ctx, x, gy, iw2, iw2, 0, p, "product", seed + i * 331, font, "菓");
-      vtext(ctx, "羊羹", x + iw2 - 5, gy - 16, 6, "#1c1c1c", font, 400, 7.5);
-      ctx.fillStyle = "#1c1c1c";
-      rr(ctx, x, gy + iw2 + 5, iw2 * 0.6, 3, 1.5);
+    if (a.layout === "fullhero") {
+      ctx.save();
+      ctx.beginPath();
+      ctx.ellipse(w * 0.48, h * 0.58, w * 1.02, h * 0.56, 0, 0, Math.PI * 2);
+      ctx.clip();
+      artwork(ctx, 0, h * 0.18, w, h * 0.58, 0, p, a.hero, seed, font, "A");
+      ctx.restore();
+      ctx.fillStyle = p.text;
+      rr(ctx, pad, h * 0.82, inner * 0.28, 4, 2);
       ctx.fill();
+    } else if (a.layout === "split") {
+      const photoW = inner * 0.52;
+      ctx.save();
+      ctx.beginPath();
+      ctx.ellipse(pad + photoW * 0.45, h * 0.48, photoW * 0.7, h * 0.34, 0, 0, Math.PI * 2);
+      ctx.clip();
+      artwork(ctx, pad, h * 0.17, photoW, h * 0.55, 0, p, a.hero, seed, font, "A");
+      ctx.restore();
+      const tx = pad + photoW + inner * 0.15;
+      for (let i = 0; i < 5; i++) {
+        ctx.fillStyle = i < 2 ? p.text : p.line;
+        rr(ctx, tx + i * 14, h * 0.2, 4, h * (i < 2 ? 0.46 : 0.34), 2);
+        ctx.fill();
+      }
+      fanMark(ctx, w - pad, h * 0.78, 10, p.accent);
+    } else if (a.layout === "card") {
+      const gap = 8;
+      const iw2 = (inner - gap) / 2;
+      const top = h * 0.18;
+      for (let i = 0; i < 4; i++) {
+        const x = pad + (i % 2) * (iw2 + gap);
+        const y2 = top + Math.floor(i / 2) * (iw2 * 0.68 + gap + 12);
+        artwork(ctx, x, y2, iw2, iw2 * 0.68, 0, p, i % 2 ? "product" : a.hero, seed + i * 331, font, "A");
+        ctx.fillStyle = p.text;
+        rr(ctx, x, y2 + iw2 * 0.68 + 5, iw2 * 0.48, 3, 1.5);
+        ctx.fill();
+      }
+    } else {
+      const photoW = inner * 0.48;
+      ctx.save();
+      ctx.beginPath();
+      ctx.ellipse(pad + photoW * 0.5, h * 0.37, photoW * 0.62, h * 0.24, 0, 0, Math.PI * 2);
+      ctx.clip();
+      artwork(ctx, pad, h * 0.18, photoW, h * 0.32, 0, p, a.hero, seed, font, "A");
+      ctx.restore();
+      thumbLines(pad + photoW + 18, h * 0.18, inner - photoW - 18, 7, 13, p.text, 3);
+      thumbLines(pad, h * 0.62, inner * 0.38, 3, 12, p.line, 3);
+      thumbLines(pad + inner * 0.5, h * 0.62, inner * 0.42, 3, 12, p.line, 3);
     }
     return;
   }
 
   if (a.tone === "patisserie") {
-    ctx.fillStyle = "#fdf8ee";
+    ctx.fillStyle = p.bg;
     ctx.fillRect(0, 0, w, h);
-    const gold = "#b3924f";
-    loopBorder(ctx, 4, 8, w, gold, false, 11);
-    ctx.save();
-    archClip(ctx, 0, 20, w, h * 0.44, 16);
-    ctx.clip();
-    artwork(ctx, 0, 12, w, h * 0.5, 0, p, a.hero, seed, font, "W");
-    ctx.restore();
-    vtext(ctx, "はちと", w - 14, 40, 13, "#2c2118", font, 400, 17);
-    vtext(ctx, "ワルツ", w - 34, 48, 13, "#2c2118", font, 400, 17);
-    const cy2 = 20 + h * 0.44 + 14;
-    const colW2 = w * 0.42;
-    const colX2 = w / 2 - colW2 / 2;
-    ctx.fillStyle = "#fdf1e7";
-    ctx.fillRect(colX2, cy2, colW2, h - cy2 - 10);
-    loopBorder(ctx, colX2 - 7, cy2 + 4, h - cy2 - 16, gold, true, 10);
-    loopBorder(ctx, colX2 + colW2 + 7, cy2 + 4, h - cy2 - 16, gold, true, 10);
-    ctx.fillStyle = gold;
-    ["ABOUT", "MENU", "NEWS"].forEach((m, i) => {
-      rr(ctx, 14, cy2 + 6 + i * 16, 34, 5, 2);
-      ctx.fill();
-    });
-    ctx.fillStyle = "rgba(75,58,38,0.55)";
-    for (let i = 0; i < 4; i++) {
-      rr(ctx, colX2 + colW2 * 0.15, cy2 + 12 + i * 11, colW2 * 0.7, 3.5, 1.75);
-      ctx.fill();
+    const gold = p.accent;
+    loopBorder(ctx, 8, 8, w - 16, gold, false, 11);
+    if (a.layout === "fullhero") {
+      ctx.save();
+      archClip(ctx, 0, h * 0.12, w, h * 0.58, 18);
+      ctx.clip();
+      artwork(ctx, 0, h * 0.08, w, h * 0.66, 0, p, a.hero, seed, font, "A");
+      ctx.restore();
+      thumbLines(w * 0.25, h * 0.78, w * 0.5, 2, 11, p.text, 4);
+    } else if (a.layout === "split") {
+      const photoW = inner * 0.48;
+      const photoX = pad + inner - photoW;
+      ctx.save();
+      archClip(ctx, photoX, h * 0.18, photoW, h * 0.52, 14);
+      ctx.clip();
+      artwork(ctx, photoX, h * 0.14, photoW, h * 0.6, 0, p, a.hero, seed, font, "A");
+      ctx.restore();
+      loopBorder(ctx, photoX - 8, h * 0.22, h * 0.45, gold, true, 10);
+      thumbLines(pad, h * 0.26, inner * 0.38, 5, 13, p.text, 4);
+      box(ctx, pad, h * 0.68, inner * 0.25, 14, 7, p.soft);
+    } else if (a.layout === "card") {
+      const gap = 8;
+      const iw2 = (inner - gap) / 2;
+      const ih = h * 0.26;
+      for (let i = 0; i < 4; i++) {
+        const x = pad + (i % 2) * (iw2 + gap);
+        const y2 = h * 0.16 + Math.floor(i / 2) * (ih + gap + 12);
+        ctx.save();
+        archClip(ctx, x, y2, iw2, ih, 10);
+        ctx.clip();
+        artwork(ctx, x, y2 - 4, iw2, ih + 8, 0, p, i % 2 ? "product" : a.hero, seed + i * 331, font, "A");
+        ctx.restore();
+        thumbLines(x + 5, y2 + ih + 5, iw2 - 10, 1, 8, p.text, 3);
+      }
+    } else {
+      const photoW = inner * 0.5;
+      ctx.save();
+      archClip(ctx, pad, h * 0.18, photoW, h * 0.32, 14);
+      ctx.clip();
+      artwork(ctx, pad, h * 0.14, photoW, h * 0.4, 0, p, a.hero, seed, font, "A");
+      ctx.restore();
+      const colX2 = pad + photoW + 18;
+      ctx.fillStyle = p.soft;
+      ctx.fillRect(colX2, h * 0.2, inner - photoW - 18, h * 0.52);
+      loopBorder(ctx, colX2 - 7, h * 0.22, h * 0.45, gold, true, 10);
+      thumbLines(colX2 + 12, h * 0.24, inner - photoW - 42, 8, 12, p.text, 3);
+      thumbLines(pad, h * 0.62, inner * 0.45, 3, 11, p.line, 3);
     }
-    box(ctx, w / 2 - 34, cy2 + 62, 68, 16, 8, "#f3e3c8");
+    return;
+  }
+
+  if (a.tone === "popwa") {
+    ctx.fillStyle = p.bg;
+    ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = p.primary;
+    rr(ctx, pad, h * 0.06, inner * 0.42, 12, 6);
+    ctx.fill();
+    fanMark(ctx, w - pad, h * 0.08, 10, p.accent);
+    if (a.layout === "fullhero") {
+      ctx.save();
+      blobPath(ctx, w * 0.5, h * 0.48, w * 0.48, h * 0.34, seed, 9);
+      ctx.clip();
+      artwork(ctx, pad * 0.55, h * 0.15, w - pad * 1.1, h * 0.62, 24, p, a.hero, seed, font, "A");
+      ctx.restore();
+      ctx.fillStyle = p.text;
+      rr(ctx, pad, h * 0.81, inner * 0.72, 14, 7);
+      ctx.fill();
+    } else if (a.layout === "split") {
+      const photoW = inner * 0.5;
+      ctx.save();
+      blobPath(ctx, pad + photoW * 0.5, h * 0.43, photoW * 0.52, h * 0.28, seed, 8);
+      ctx.clip();
+      artwork(ctx, pad, h * 0.16, photoW, h * 0.52, 22, p, a.hero, seed, font, "A");
+      ctx.restore();
+      const tx = pad + photoW + 18;
+      thumbLines(tx, h * 0.2, inner - photoW - 18, 5, 16, p.text, 9);
+      speechBubble(ctx, tx, h * 0.62, inner - photoW - 18, h * 0.14, p.primary, seed + 7);
+    } else if (a.layout === "card") {
+      const gap = 9;
+      const cw = (inner - gap) / 2;
+      const ch = h * 0.24;
+      for (let i = 0; i < 4; i++) {
+        const x = pad + (i % 2) * (cw + gap);
+        const y2 = h * 0.17 + Math.floor(i / 2) * (ch + gap + 13);
+        artwork(ctx, x, y2, cw, ch, 22, p, i % 2 ? "product" : a.hero, seed + i * 977, font, "A");
+        ctx.fillStyle = i % 2 ? p.accent : p.primary;
+        rr(ctx, x + 8, y2 + ch + 6, cw * 0.58, 8, 4);
+        ctx.fill();
+      }
+    } else {
+      ctx.save();
+      blobPath(ctx, pad + inner * 0.28, h * 0.34, inner * 0.26, h * 0.2, seed, 8);
+      ctx.clip();
+      artwork(ctx, pad, h * 0.17, inner * 0.56, h * 0.34, 20, p, a.hero, seed, font, "A");
+      ctx.restore();
+      thumbLines(pad + inner * 0.62, h * 0.18, inner * 0.34, 7, 14, p.text, 8);
+      thumbLines(pad, h * 0.62, inner, 5, 13, p.primary, 6);
+    }
     return;
   }
 
@@ -4177,13 +4294,7 @@ function drawThumb(ctx: CanvasRenderingContext2D, a: Full, w: number, h: number,
   }
 
   let y = h * 0.13;
-  const txt = (x: number, yy: number, ww: number, n: number, lh: number, col = p.line) => {
-    ctx.fillStyle = col;
-    for (let i = 0; i < n; i++) {
-      rr(ctx, x, yy + i * lh, i === n - 1 ? ww * 0.6 : ww, 3.5, 1.75);
-      ctx.fill();
-    }
-  };
+  const txt = thumbLines;
 
   if (a.layout === "fullhero") {
     const hh = h * 0.42;
